@@ -6,16 +6,16 @@
     <title>SaunaMaster Pro ⚡</title>
     <style>
         :root {
-            --bg-color: #0f172a; /* Sügav tumesinine */
+            --bg-color: #0f172a;
             --card-color: #1e293b;
             --text-color: #f8fafc;
-            --accent-color: #f59e0b; /* Merevaik/Kuldne */
-            --success-color: #10b981; /* Roheline soovituseks */
+            --accent-color: #f59e0b;
+            --success-color: #10b981;
             --input-bg: #334155;
         }
 
         body {
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            font-family: 'Inter', sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
             display: flex;
@@ -36,56 +36,45 @@
         }
 
         h1 {
-            font-size: 1.8rem;
-            margin-top: 0;
-            margin-bottom: 0.5rem;
             color: var(--accent-color);
             text-align: center;
-            letter-spacing: -0.5px;
+            margin-top: 0;
         }
 
-        .subtitle {
-            text-align: center;
-            color: #94a3b8;
-            font-size: 0.9rem;
-            margin-bottom: 2rem;
-        }
-
-        .input-group {
-            margin-bottom: 1.5rem;
-        }
-
+        .input-group { margin-bottom: 1.5rem; }
+        
         label {
             display: block;
             margin-bottom: 0.5rem;
             font-size: 0.85rem;
             color: #cbd5e1;
-            font-weight: 500;
         }
 
-        input {
+        /* Uus disain valikutele ja sisestustele */
+        input, select {
             width: 100%;
-            padding: 12px 16px;
+            padding: 14px;
             border-radius: 12px;
-            border: 2px solid transparent;
+            border: 1px solid #475569;
             background-color: var(--input-bg);
             color: white;
             font-size: 1rem;
             box-sizing: border-box;
-            transition: all 0.2s;
+            appearance: none; /* Eemaldab vaikimisi noole */
         }
 
-        input:focus {
-            outline: none;
-            border-color: var(--accent-color);
-            background-color: #475569;
+        /* Lisame oma noole selectile */
+        .select-wrapper {
+            position: relative;
         }
-
-        .btn-group {
-            display: gap;
-            gap: 10px;
-            display: flex;
-            flex-direction: column;
+        .select-wrapper::after {
+            content: '▼';
+            font-size: 0.8rem;
+            color: var(--accent-color);
+            position: absolute;
+            right: 15px;
+            top: 18px;
+            pointer-events: none;
         }
 
         button {
@@ -93,260 +82,216 @@
             padding: 16px;
             border: none;
             border-radius: 14px;
-            font-size: 1rem;
+            font-size: 1.1rem;
             font-weight: 600;
             cursor: pointer;
-            transition: transform 0.1s ease, filter 0.2s;
-        }
-
-        .btn-calc {
             background-color: var(--accent-color);
             color: #0f172a;
+            transition: filter 0.2s;
+            margin-top: 10px;
         }
         
-        .btn-calc:hover { filter: brightness(1.1); }
+        button:active { transform: scale(0.98); }
 
-        .btn-smart {
-            background-color: transparent;
-            color: var(--success-color);
-            border: 2px solid var(--success-color);
+        /* Peidetud seaded (võrgutasu) */
+        details {
+            margin-top: 15px;
+            color: #64748b;
+            font-size: 0.9rem;
+            cursor: pointer;
         }
+        summary { margin-bottom: 10px; }
 
-        .btn-smart:hover { background-color: rgba(16, 185, 129, 0.1); }
-
-        button:active { transform: scale(0.97); }
-
-        /* Tulemuste stiil */
         #resultArea {
             margin-top: 2rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid #334155;
+            padding: 20px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 16px;
+            text-align: center;
             display: none;
-            animation: fadeIn 0.5s ease;
+            border: 1px solid #334155;
         }
 
         .cost-display {
-            font-size: 2.5rem;
+            font-size: 3rem;
             font-weight: 800;
-            color: var(--text-color);
-            text-align: center;
-            line-height: 1;
+            color: var(--accent-color);
             margin: 10px 0;
         }
-        
-        .cost-label { text-align: center; color: #94a3b8; font-size: 0.9rem; }
 
-        .details {
-            background: #0f172a;
-            padding: 15px;
-            border-radius: 12px;
-            font-size: 0.85rem;
-            color: #cbd5e1;
-            margin-top: 15px;
-        }
-        
-        .loading { text-align: center; color: var(--accent-color); display: none; margin-top: 10px; }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .loading { text-align: center; color: var(--accent-color); display: none; margin-top: 20px;}
     </style>
 </head>
 <body>
 
 <div class="container">
     <h1>SaunaMaster Pro ⚡</h1>
-    <div class="subtitle">Live börsihind + Sinu võrgutasu</div>
+    
+    <div class="input-group">
+        <label>Kui kaua saunad? (tundi)</label>
+        <div class="select-wrapper">
+            <select id="duration">
+                <option value="1">1 tund</option>
+                <option value="1.5">1.5 tundi</option>
+                <option value="2">2 tundi</option>
+                <option value="2.5">2.5 tundi</option>
+                <option value="3" selected>3 tundi</option>
+                <option value="3.5">3.5 tundi</option>
+                <option value="4">4 tundi</option>
+                <option value="5">5 tundi</option>
+            </select>
+        </div>
+    </div>
 
     <div class="input-group">
-        <label>Sessiooni kestvus (tundi)</label>
-        <input type="number" id="duration" value="3" step="0.5">
+        <label>Millal alustad kütmist?</label>
+        <div class="select-wrapper">
+            <select id="startTimeSelect">
+                <option>Laen kellaaegu...</option>
+            </select>
+        </div>
     </div>
 
-    <div class="input-group">
-        <label>Lisatasud kokku (võrgutasu + marginaal) senti/kWh</label>
-        <input type="number" id="fixedFees" value="7.0" step="0.1">
-    </div>
+    <details>
+        <summary>⚙️ Täpsemad seaded (võrgutasu)</summary>
+        <div class="input-group">
+            <label>Võrgutasu + marginaal (senti/kWh)</label>
+            <input type="number" id="fixedFees" value="7.0" step="0.1">
+        </div>
+        <div class="input-group">
+            <label>Kerise võimsus (kW)</label>
+            <input type="number" id="heaterPower" value="6">
+        </div>
+    </details>
 
-    <div id="pricesData" style="display:none;"></div>
+    <button onclick="calculateCost()">🔥 Arvuta kulu</button>
 
-    <div class="btn-group">
-        <button class="btn-calc" onclick="calculateNow()">🔥 Arvuta praegune kulu</button>
-        <button class="btn-smart" onclick="findBestTime()">🌱 Leia odavaim aeg (24h)</button>
-    </div>
-
-    <div id="loading" class="loading">Laen andmeid Eleringist...</div>
+    <div id="loading" class="loading">Laen Eleringi andmeid...</div>
 
     <div id="resultArea">
-        <div class="cost-label" id="resultTitle">Hinnanguline kulu:</div>
+        <div style="color:#94a3b8">Kogu sessiooni hind:</div>
         <div class="cost-display" id="totalCost">0.00 €</div>
-        <div class="details" id="detailsText"></div>
+        <div id="avgPriceInfo" style="font-size: 0.85rem; color: #cbd5e1;"></div>
     </div>
 </div>
 
 <script>
-    const HEATER_POWER = 6; // kW
     const VAT = 1.24; // Käibemaks 24%
-
-    // See funktsioon käivitub kohe lehe laadimisel ja toob hinnad taustal
     let electricityPrices = [];
 
+    // 1. Laeme hinnad kohe, kui leht avaneb
     async function fetchPrices() {
         document.getElementById('loading').style.display = 'block';
-        
-        // Leiame tänase ja homse kuupäeva ISO formaadis
         const start = new Date();
         start.setHours(0,0,0,0);
         const end = new Date();
-        end.setDate(end.getDate() + 1);
+        end.setDate(end.getDate() + 1); // Homne ka
         end.setHours(23,59,59,999);
 
-        // Kodeerime kuupäevad URLi jaoks
-        const startStr = start.toISOString();
-        const endStr = end.toISOString();
-
+        const url = `https://dashboard.elering.ee/api/nps/price?start=${start.toISOString()}&end=${end.toISOString()}`;
+        
         try {
-            // Päris päring Eleringi serverisse
-           const response = await fetch(`https://corsproxy.io/?` + encodeURIComponent(`https://dashboard.elering.ee/api/nps/price?start=${startStr}&end=${endStr}`));
+            // Kasutame proxy-t
+            const response = await fetch('https://corsproxy.io/?' + encodeURIComponent(url));
             const data = await response.json();
             
-            // Elering annab andmed 'data.ee' all
             if (data.data && data.data.ee) {
                 electricityPrices = data.data.ee;
-                console.log("Hinnad laetud:", electricityPrices.length, "tundi");
-            } else {
-                alert("Ei saanud Eleringist andmeid kätte.");
+                populateTimeSelect(); // Täidame rippmenüü
             }
         } catch (error) {
-            console.error("Viga:", error);
-            alert("Viga hindade laadimisel. Kontrolli internetiühendust.");
+            alert("Viga andmete laadimisel!");
         } finally {
             document.getElementById('loading').style.display = 'none';
         }
     }
 
-    // Käivitame andmete laadimise kohe
-    fetchPrices();
-
-    function getPriceAtTime(dateObj) {
-        // Leiame massiivist hinna, mis vastab antud tunnile
-        // Eleringi timestamp on sekundites (UNIX), JS kasutab millisekundeid
-        const hourTimestamp = Math.floor(dateObj.getTime() / 1000); 
+    // 2. Täidame kellaaja valiku (Dropdown)
+    function populateTimeSelect() {
+        const select = document.getElementById('startTimeSelect');
+        select.innerHTML = ''; // Tühjendame "Laen..." teksti
         
-        // Leiame hinna vahemiku (Elering annab tunni alguse timestampi)
-        // Kuna timestampid ei pruugi sekundipealt klappida, otsime sama tundi
-        const match = electricityPrices.find(p => {
-            const priceTime = new Date(p.timestamp * 1000);
-            return priceTime.getDate() === dateObj.getDate() && 
-                   priceTime.getHours() === dateObj.getHours();
+        const now = new Date();
+        now.setMinutes(0, 0, 0); // Ümardame täistunniks
+
+        electricityPrices.forEach(pricePoint => {
+            const time = new Date(pricePoint.timestamp * 1000);
+            
+            // Ära näita mineviku tunde
+            if (time < now) return;
+
+            // Arvutame selle tunni hinna (börs + KM)
+            const pricePerKwh = (pricePoint.price / 10) * VAT;
+            
+            // Vormindame kellaaja (nt "Täna 18:00")
+            const isToday = time.getDate() === now.getDate();
+            const dayStr = isToday ? "Täna" : "Homme";
+            const hourStr = time.getHours() + ":00";
+            
+            // Loome valiku variandi
+            const option = document.createElement('option');
+            option.value = pricePoint.timestamp; // Salvestame timestampi väärtuseks
+            option.text = `${dayStr} ${hourStr} (börs: ${pricePerKwh.toFixed(1)} s/kWh)`;
+            
+            // Värvime odavad tunnid roheliseks (visuaalne häkk)
+            if (pricePerKwh < 10) option.style.color = "#4ade80"; 
+            
+            select.appendChild(option);
         });
 
-        if (match) {
-            // Hind on EUR/MWh. Teeme senti/kWh (jagame 10-ga) ja lisame KM
-            return (match.price / 10) * VAT; 
-        }
-        return null; // Hind puudub
+        // Leiame automaatselt kõige odavama aja järgmise 24h jooksul ja valime selle vaikimisi?
+        // Või jätame vaikimisi esimese (praeguse) tunni. Hetkel jätame praeguse (esimese).
     }
 
-    function calculateNow() {
-        if (electricityPrices.length === 0) { alert("Andmed pole veel laetud, oota hetk!"); return; }
-
+    // 3. Arvutuse loogika
+    function calculateCost() {
         const duration = parseFloat(document.getElementById('duration').value);
         const fixedFees = parseFloat(document.getElementById('fixedFees').value);
-        const now = new Date();
+        const power = parseFloat(document.getElementById('heaterPower').value);
+        
+        // Saame valitud algusaja (timestamp sekundites)
+        const startTimestamp = parseInt(document.getElementById('startTimeSelect').value);
+        
+        if (!startTimestamp) { alert("Oota, andmed laevad veel!"); return; }
 
         let totalCost = 0;
-        let avgPrice = 0;
-        let missingData = false;
+        let totalPriceSum = 0; // Lihtsalt keskmise arvutamiseks
 
-        // Arvutame kulu tund-tunni haaval
-        // Kui kestvus on 2.5h, siis võtame: 1h hinda + 1h hinda + 0.5h hinda
+        // Leiame massiivist õige alguspunkti
+        const startIndex = electricityPrices.findIndex(p => p.timestamp === startTimestamp);
+
+        // Arvutame tsüklina läbi iga tunni
         for (let i = 0; i < Math.ceil(duration); i++) {
-            let checkTime = new Date(now.getTime() + i * 60 * 60 * 1000);
-            let priceWithVat = getPriceAtTime(checkTime); // Senti/kWh koos KM-ga
+            // Kontrollime, kas andmed on olemas
+            if (startIndex + i >= electricityPrices.length) break;
 
-            if (priceWithVat === null) { missingData = true; break; }
+            let priceItem = electricityPrices[startIndex + i];
+            let priceWithVat = (priceItem.price / 10) * VAT;
+            let fullPrice = priceWithVat + fixedFees; // Börs + Võrk
 
-            // Koguhind = Börsihind (KM-ga) + Lisatasud (eeldame, et sisestati juba KM-ga või ilma, aga lihtsuse mõttes liidame otsa)
-            // Tegelikult: (Börs + Lisatasud) * kW
-            let fullPriceCents = priceWithVat + fixedFees;
-
-            // Kui on viimane tund ja see pole täistund (nt 0.5h), siis võtame proportsiooni
-            let hoursInThisSlot = 1;
+            // Viimase tunni proportsioon (kui on nt 2.5 tundi)
+            let hoursInSlot = 1;
             if (i === Math.ceil(duration) - 1 && duration % 1 !== 0) {
-                hoursInThisSlot = duration % 1;
+                hoursInSlot = duration % 1;
             }
 
-            totalCost += (fullPriceCents / 100) * HEATER_POWER * hoursInThisSlot;
-            avgPrice += fullPriceCents;
+            totalCost += (fullPrice / 100) * power * hoursInSlot;
+            totalPriceSum += fullPrice * hoursInSlot;
         }
 
-        if (missingData) {
-            alert("Ei leidnud hindu kogu perioodiks (ehk läheb liiga kaugele tulevikku).");
-            return;
-        }
-
-        displayResult("Praegune saunakulu", totalCost, 
-            `Börsihind muutub iga tund.<br>Arvutatud algusega kell ${now.getHours()}:${now.getMinutes() < 10 ? '0'+now.getMinutes() : now.getMinutes()}`);
-    }
-
-    function findBestTime() {
-        if (electricityPrices.length === 0) { alert("Andmed pole veel laetud!"); return; }
-        
-        const duration = parseFloat(document.getElementById('duration').value);
-        const fixedFees = parseFloat(document.getElementById('fixedFees').value);
-        
-        let bestCost = Infinity;
-        let bestTime = null;
-        let bestAvgPrice = 0;
-
-        // Vaatame läbi kõik saadaval olevad tunnid
-        // Lihtsuse mõttes vaatame täistunde alguspunktidena
-        for (let i = 0; i < electricityPrices.length - Math.ceil(duration); i++) {
-            let currentStartItem = electricityPrices[i];
-            let startTime = new Date(currentStartItem.timestamp * 1000);
-            
-            // Ära vaata minevikku (v.a käimasolev tund)
-            if (startTime < new Date().setMinutes(0,0,0)) continue;
-
-            let tempCost = 0;
-            // Arvuta selle võimaliku akna kulu
-            for (let j = 0; j < Math.ceil(duration); j++) {
-                 let p = electricityPrices[i+j];
-                 let priceWithVat = (p.price / 10) * VAT;
-                 let fullPriceCents = priceWithVat + fixedFees;
-                 
-                 let hoursInThisSlot = 1;
-                 if (j === Math.ceil(duration) - 1 && duration % 1 !== 0) {
-                     hoursInThisSlot = duration % 1;
-                 }
-                 
-                 tempCost += (fullPriceCents / 100) * HEATER_POWER * hoursInThisSlot;
-            }
-
-            if (tempCost < bestCost) {
-                bestCost = tempCost;
-                bestTime = startTime;
-            }
-        }
-
-        if (bestTime) {
-             const dayStr = bestTime.getDate() === new Date().getDate() ? "Täna" : "Homme";
-             const timeStr = `${bestTime.getHours()}:00`;
-             
-             displayResult("Soovituslik aeg 🌱", bestCost, 
-                `Parim aeg on <b>${dayStr} kell ${timeStr}</b>.<br>Säästlikum kui muud ajad!`);
-        } else {
-            alert("Ei leidnud sobivat aega (andmed otsas).");
-        }
-    }
-
-    function displayResult(title, cost, details) {
+        // Kuvame tulemuse
         document.getElementById('resultArea').style.display = 'block';
-        document.getElementById('resultTitle').innerText = title;
-        document.getElementById('totalCost').innerText = cost.toFixed(2) + " €";
-        document.getElementById('detailsText').innerHTML = details;
+        document.getElementById('totalCost').innerText = totalCost.toFixed(2) + " €";
+        
+        // Kuvame ka keskmise kWh hinna selle sessiooni jooksul
+        let avgPrice = totalPriceSum / duration;
+        document.getElementById('avgPriceInfo').innerText = 
+            `Keskmine hind koos võrgutasudega: ${avgPrice.toFixed(1)} s/kWh`;
     }
+
+    // Käivita kohe
+    fetchPrices();
 </script>
 
 </body>
-
 </html>
