@@ -12,6 +12,7 @@
             --accent-color: #f59e0b;
             --success-color: #10b981;
             --input-bg: #334155;
+            --secondary-text: #94a3b8;
         }
 
         body {
@@ -39,6 +40,7 @@
             color: var(--accent-color);
             text-align: center;
             margin-top: 0;
+            margin-bottom: 20px;
         }
 
         .input-group { margin-bottom: 1.5rem; }
@@ -48,6 +50,7 @@
             margin-bottom: 0.5rem;
             font-size: 0.85rem;
             color: #cbd5e1;
+            font-weight: 500;
         }
 
         input, select {
@@ -60,6 +63,12 @@
             font-size: 1rem;
             box-sizing: border-box;
             appearance: none;
+            transition: border-color 0.2s;
+        }
+        
+        input:focus, select:focus {
+            border-color: var(--accent-color);
+            outline: none;
         }
 
         .select-wrapper { position: relative; }
@@ -72,7 +81,33 @@
             pointer-events: none;
         }
 
-        /* Nuppude konteiner */
+        /* Paketi tüübi valik (Tabid) */
+        .type-selector {
+            display: flex;
+            background: var(--input-bg);
+            padding: 4px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .type-option {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--secondary-text);
+            transition: all 0.2s;
+        }
+
+        .type-option.active {
+            background-color: var(--accent-color);
+            color: #0f172a;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
         .btn-group {
             display: flex;
             gap: 10px;
@@ -88,30 +123,32 @@
             font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
-            transition: filter 0.2s;
+            transition: transform 0.1s;
         }
         
         button:active { transform: scale(0.98); }
 
-        .btn-calc {
-            background-color: var(--accent-color);
-            color: #0f172a;
-        }
-
+        .btn-calc { background-color: var(--accent-color); color: #0f172a; }
+        
         .btn-smart {
             background-color: transparent;
             border: 2px solid var(--success-color);
             color: var(--success-color);
         }
-        .btn-smart:hover { background-color: rgba(16, 185, 129, 0.1); }
+
+        /* Peidetud asjade klass */
+        .hidden { display: none !important; }
 
         details {
-            margin-top: 15px;
-            color: #64748b;
+            margin-top: 20px;
+            color: var(--secondary-text);
             font-size: 0.9rem;
             cursor: pointer;
+            padding: 10px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 8px;
         }
-        summary { margin-bottom: 10px; }
+        summary { font-weight: 500; }
 
         #resultArea {
             margin-top: 2rem;
@@ -139,9 +176,8 @@
             border-radius: 20px;
             font-size: 0.8rem;
             font-weight: bold;
-            display: none; /* Alguses peidus */
-            margin-bottom: 10px;
             display: inline-block;
+            margin-bottom: 10px;
         }
 
         .loading { text-align: center; color: var(--accent-color); display: none; margin-top: 20px;}
@@ -153,6 +189,11 @@
 <div class="container">
     <h1>SaunaMaster Pro ⚡</h1>
     
+    <div class="type-selector">
+        <div class="type-option active" onclick="setPackageType('exchange')" id="tabExchange">Börsipakett</div>
+        <div class="type-option" onclick="setPackageType('fixed')" id="tabFixed">Fikseeritud</div>
+    </div>
+
     <div class="input-group">
         <label>Kui kaua saunas möllad?</label>
         <div class="select-wrapper">
@@ -169,7 +210,7 @@
         </div>
     </div>
 
-    <div class="input-group">
+    <div id="exchangeGroup" class="input-group">
         <label>Millal alustad kütmist?</label>
         <div class="select-wrapper">
             <select id="startTimeSelect">
@@ -178,22 +219,29 @@
         </div>
     </div>
 
-    <details>
-        <summary>⚙️ Täpsemad seaded (võrgutasu)</summary>
-        <div class="input-group">
-            <label>Võrgutasu + marginaal (senti/kWh)</label>
-            <input type="number" id="fixedFees" value="7.0" step="0.1">
-        </div>
-        <div class="input-group">
-            <label>Kerise võimsus (kW)</label>
-            <input type="number" id="heaterPower" value="6">
-        </div>
-    </details>
+    <div id="fixedGroup" class="input-group hidden">
+        <label>Sinu elektri hind (senti/kWh)</label>
+        <input type="number" id="userFixedPrice" placeholder="Nt. 12.5" step="0.1">
+    </div>
 
     <div class="btn-group">
         <button class="btn-calc" onclick="calculateCost()">🔥 Arvuta kulu</button>
-        <button class="btn-smart" onclick="findCheapestAndSet()">🌱 Leia soodsaim aeg</button>
+        <button id="btnSmart" class="btn-smart" onclick="findCheapestAndSet()">🌱 Leia soodsaim aeg</button>
     </div>
+
+    <details>
+        <summary>⚙️ Täpsemad seaded</summary>
+        <div style="margin-top: 15px;">
+            <div class="input-group">
+                <label>Võrgutasu + marginaal (senti/kWh)</label>
+                <input type="number" id="fixedFees" value="7.0" step="0.1">
+            </div>
+            <div class="input-group">
+                <label>Kerise võimsus (kW)</label>
+                <input type="number" id="heaterPower" value="6">
+            </div>
+        </div>
+    </details>
 
     <div id="loading" class="loading">Laen Eleringi andmeid...</div>
 
@@ -208,7 +256,9 @@
 <script>
     const VAT = 1.24; // Käibemaks 24%
     let electricityPrices = [];
+    let currentMode = 'exchange'; // 'exchange' või 'fixed'
 
+    // 1. Käivitus
     async function fetchPrices() {
         document.getElementById('loading').style.display = 'block';
         const start = new Date();
@@ -228,7 +278,7 @@
                 populateTimeSelect();
             }
         } catch (error) {
-            alert("Viga andmete laadimisel!");
+            console.log("Viga andmetega (pole hullu, kui oled fix paketis)");
         } finally {
             document.getElementById('loading').style.display = 'none';
         }
@@ -259,95 +309,39 @@
         });
     }
 
+    // 2. Paketi vahetamine (UI loogika)
+    function setPackageType(type) {
+        currentMode = type;
+        
+        // Nuppude stiilid
+        document.getElementById('tabExchange').className = type === 'exchange' ? 'type-option active' : 'type-option';
+        document.getElementById('tabFixed').className = type === 'fixed' ? 'type-option active' : 'type-option';
+
+        // Peida/Näita väljasid
+        if (type === 'exchange') {
+            document.getElementById('exchangeGroup').classList.remove('hidden');
+            document.getElementById('btnSmart').classList.remove('hidden');
+            document.getElementById('fixedGroup').classList.add('hidden');
+        } else {
+            document.getElementById('exchangeGroup').classList.add('hidden');
+            document.getElementById('btnSmart').classList.add('hidden'); // Fix hinnaga pole mõtet otsida
+            document.getElementById('fixedGroup').classList.remove('hidden');
+        }
+        
+        // Peida vana tulemus
+        document.getElementById('resultArea').style.display = 'none';
+    }
+
+    // 3. Arvutamine
     function calculateCost(isSmart = false) {
         const duration = parseFloat(document.getElementById('duration').value);
         const fixedFees = parseFloat(document.getElementById('fixedFees').value);
         const power = parseFloat(document.getElementById('heaterPower').value);
-        const startTimestamp = parseInt(document.getElementById('startTimeSelect').value);
         
-        if (!startTimestamp) { alert("Oota, andmed laevad veel!"); return; }
-
         let totalCost = 0;
-        let totalPriceSum = 0;
-        const startIndex = electricityPrices.findIndex(p => p.timestamp === startTimestamp);
+        let avgPriceDisp = 0;
 
-        for (let i = 0; i < Math.ceil(duration); i++) {
-            if (startIndex + i >= electricityPrices.length) break;
-
-            let priceItem = electricityPrices[startIndex + i];
-            let fullPrice = ((priceItem.price / 10) * VAT) + fixedFees;
-
-            let hoursInSlot = 1;
-            if (i === Math.ceil(duration) - 1 && duration % 1 !== 0) {
-                hoursInSlot = duration % 1;
-            }
-
-            totalCost += (fullPrice / 100) * power * hoursInSlot;
-            totalPriceSum += fullPrice * hoursInSlot;
-        }
-
-        const resultArea = document.getElementById('resultArea');
-        resultArea.style.display = 'block';
-        document.getElementById('totalCost').innerText = totalCost.toFixed(2) + " €";
-        
-        let avgPrice = totalPriceSum / duration;
-        document.getElementById('avgPriceInfo').innerText = 
-            `Keskmine hind koos võrgutasudega: ${avgPrice.toFixed(1)} s/kWh`;
-
-        // Näita "SOODSAIM" märki ainult siis, kui vajutati rohelist nuppu
-        document.getElementById('smartBadge').style.display = isSmart ? 'inline-block' : 'none';
-    }
-
-    // See funktsioon leiab parima aja ja muudab menüü valikut
-    function findCheapestAndSet() {
-        const duration = parseFloat(document.getElementById('duration').value);
-        const fixedFees = parseFloat(document.getElementById('fixedFees').value);
-        
-        let bestCost = Infinity;
-        let bestTimestamp = null;
-
-        // Käime läbi kõik valikud, mis on rippmenüüs saadaval
-        const select = document.getElementById('startTimeSelect');
-        const options = Array.from(select.options);
-
-        // Lihtne "sliding window" otsing
-        options.forEach(option => {
-            let startTimestamp = parseInt(option.value);
-            let startIndex = electricityPrices.findIndex(p => p.timestamp === startTimestamp);
-            
-            let tempCost = 0;
-            // Arvutame hinna selle algusaja jaoks
-            for (let i = 0; i < Math.ceil(duration); i++) {
-                if (startIndex + i >= electricityPrices.length) return; // Andmed otsas
-                let p = electricityPrices[startIndex + i];
-                let fullPrice = ((p.price / 10) * VAT) + fixedFees;
-                
-                let hoursInSlot = 1;
-                if (i === Math.ceil(duration) - 1 && duration % 1 !== 0) {
-                    hoursInSlot = duration % 1;
-                }
-                tempCost += fullPrice * hoursInSlot;
-            }
-
-            if (tempCost < bestCost) {
-                bestCost = tempCost;
-                bestTimestamp = startTimestamp;
-            }
-        });
-
-        if (bestTimestamp) {
-            // Määrame rippmenüüs selle aja aktiivseks
-            select.value = bestTimestamp;
-            // Käivitame arvutuse lipukesega "isSmart=true"
-            calculateCost(true);
-        } else {
-            alert("Ei leidnud sobivat aega.");
-        }
-    }
-
-    fetchPrices();
-</script>
-
-</body>
-</html>
-
+        if (currentMode === 'fixed') {
+            // --- FIKSEERITUD HINNA LOOGIKA ---
+            const userPrice = parseFloat(document.getElementById('userFixedPrice').value);
+            if (
