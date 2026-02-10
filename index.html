@@ -1,3 +1,322 @@
+<!DOCTYPE html>
+<html lang="et">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SaunaMaster Pro ⚡</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-color: #1e293b;
+            --text-color: #f8fafc;
+            --accent-color: #f59e0b;
+            --success-color: #10b981;
+            --input-bg: #334155;
+            --secondary-text: #94a3b8;
+            --bmc-yellow: #FFDD00;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: var(--card-color);
+            padding: 2rem;
+            border-radius: 24px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+            max-width: 420px;
+            width: 100%;
+        }
+
+        h1 {
+            color: var(--accent-color);
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+
+        .input-group { margin-bottom: 1.5rem; }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+            color: #cbd5e1;
+            font-weight: 500;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            border: 1px solid #475569;
+            background-color: var(--input-bg);
+            color: white;
+            font-size: 1rem;
+            box-sizing: border-box;
+            appearance: none;
+            transition: border-color 0.2s;
+        }
+        
+        input:focus, select:focus {
+            border-color: var(--accent-color);
+            outline: none;
+        }
+
+        .select-wrapper { position: relative; }
+        .select-wrapper::after {
+            content: '▼';
+            font-size: 0.8rem;
+            color: var(--accent-color);
+            position: absolute;
+            right: 15px; top: 18px;
+            pointer-events: none;
+        }
+
+        .type-selector {
+            display: flex;
+            background: var(--input-bg);
+            padding: 4px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .type-option {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--secondary-text);
+            transition: all 0.2s;
+        }
+
+        .type-option.active {
+            background-color: var(--accent-color);
+            color: #0f172a;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            flex-direction: column;
+            margin-top: 20px;
+        }
+
+        button {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 14px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+        
+        button:active { transform: scale(0.98); }
+
+        .btn-calc { background-color: var(--accent-color); color: #0f172a; }
+        
+        .btn-smart {
+            background-color: transparent;
+            border: 2px solid var(--success-color);
+            color: var(--success-color);
+        }
+
+        .hidden { display: none !important; }
+
+        details {
+            margin-top: 20px;
+            color: var(--secondary-text);
+            font-size: 0.9rem;
+            cursor: pointer;
+            padding: 10px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 8px;
+        }
+        summary { font-weight: 500; }
+
+        #resultArea {
+            margin-top: 2rem;
+            padding: 20px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 16px;
+            text-align: center;
+            display: none;
+            border: 1px solid #334155;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .cost-display {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--accent-color);
+            margin: 10px 0;
+            line-height: 1;
+        }
+        
+        .badge {
+            background: var(--success-color);
+            color: #0f172a;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        /* --- Kohvinupu stiilid --- */
+        .coffee-container {
+            margin-top: 25px;
+            text-align: center;
+            border-top: 1px solid #334155;
+            padding-top: 20px;
+            animation: fadeIn 1s ease;
+        }
+
+        .coffee-label {
+            font-size: 0.85rem; 
+            color: #cbd5e1; 
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .btn-coffee {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background-color: var(--bmc-yellow);
+            color: #000000;
+            font-weight: 700;
+            text-decoration: none;
+            padding: 14px 24px;
+            border-radius: 50px;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 15px rgba(255, 221, 0, 0.2);
+            font-size: 1rem;
+        }
+
+        .btn-coffee:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(255, 221, 0, 0.4);
+        }
+
+        /* --- Jalus --- */
+        .footer-legal {
+            margin-top: 40px;
+            font-size: 0.75rem;
+            color: #64748b;
+            text-align: center;
+            line-height: 1.6;
+            border-top: 1px solid #334155;
+            padding-top: 20px;
+        }
+        .footer-legal a { color: #64748b; text-decoration: underline; }
+
+        .loading { text-align: center; color: var(--accent-color); display: none; margin-top: 20px;}
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>SaunaMaster Pro ⚡</h1>
+    
+    <div class="type-selector">
+        <div class="type-option active" onclick="setPackageType('exchange')" id="tabExchange">Börsipakett</div>
+        <div class="type-option" onclick="setPackageType('fixed')" id="tabFixed">Fikseeritud</div>
+    </div>
+
+    <div class="input-group">
+        <label>Kui kaua saunas möllad? (tundi)</label>
+        <div class="select-wrapper">
+            <select id="duration">
+                <option value="1">1 tund</option>
+                <option value="1.5">1.5 tundi</option>
+                <option value="2">2 tundi</option>
+                <option value="2.5">2.5 tundi</option>
+                <option value="3" selected>3 tundi</option>
+                <option value="3.5">3.5 tundi</option>
+                <option value="4">4 tundi</option>
+                <option value="5">5 tundi</option>
+            </select>
+        </div>
+    </div>
+
+    <div id="exchangeGroup" class="input-group">
+        <label>Millal alustad kütmist?</label>
+        <div class="select-wrapper">
+            <select id="startTimeSelect">
+                <option>Laen kellaaegu...</option>
+            </select>
+        </div>
+    </div>
+
+    <div id="fixedGroup" class="input-group hidden">
+        <label>Sinu elektri hind (senti/kWh)</label>
+        <input type="number" id="userFixedPrice" placeholder="Nt. 12.5" step="0.1">
+    </div>
+
+    <div class="btn-group">
+        <button class="btn-calc" onclick="calculateCost()">🔥 Arvuta kulu</button>
+        <button id="btnSmart" class="btn-smart" onclick="findCheapestAndSet()">🌱 Leia soodsaim aeg</button>
+    </div>
+
+    <details>
+        <summary>⚙️ Täpsemad seaded</summary>
+        <div style="margin-top: 15px;">
+            <div class="input-group">
+                <label>Võrgutasu + marginaal (senti/kWh)</label>
+                <input type="number" id="fixedFees" value="7.0" step="0.1">
+            </div>
+            <div class="input-group">
+                <label>Kerise võimsus (kW)</label>
+                <input type="number" id="heaterPower" value="6">
+            </div>
+        </div>
+    </details>
+
+    <div id="loading" class="loading">Laen Eleringi andmeid...</div>
+
+    <div id="resultArea">
+        <div id="smartBadge" class="badge" style="display:none;">SOODSAIM VALIK!</div>
+        <div style="color:#94a3b8">Kogu sessiooni hind:</div>
+        <div class="cost-display" id="totalCost">0.00 €</div>
+        <div id="avgPriceInfo" style="font-size: 0.85rem; color: #cbd5e1;"></div>
+
+        <div id="coffeeSection" class="coffee-container hidden">
+            <span class="coffee-label">Kas äpp aitas säästa? ⚡</span>
+            <a href="https://www.buymeacoffee.com/lessgo" target="_blank" class="btn-coffee">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"></path><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path><line x1="6" y1="1" x2="6" y2="4"></line><line x1="10" y1="1" x2="10" y2="4"></line><line x1="14" y1="1" x2="14" y2="4"></line></svg>
+                Osta 1 virtuaalne saunaviht
+            </a>
+        </div>
+    </div>
+
+    <div class="footer-legal">
+        LessGo OÜ | Reg: 16914274<br>
+        Langerma küla, Põhja-Pärnumaa vald<br>
+        Kontakt: info@lessgo.ee<br>
+        <a href="#" style="opacity: 0.7;">Privaatsus ja tingimused</a>
+    </div>
+
+</div>
+
 <script>
     const VAT = 1.24; // Käibemaks 24%
     let electricityPrices = [];
@@ -90,9 +409,7 @@
 
         electricityPrices.forEach(pricePoint => {
             const time = new Date(pricePoint.timestamp * 1000);
-            // Näitame ka praegust tundi, mitte ainult tulevikku
             if (time < now && time.getHours() !== now.getHours()) return;
-            
             hasFuturePrices = true;
 
             const pricePerKwh = (pricePoint.price / 10) * VAT;
@@ -106,8 +423,8 @@
             // Visuaalne lisa: näita hinda rippmenüüs
             option.text = `${dayStr} ${hourStr} (${pricePerKwh.toFixed(1)} s/kWh)`;
             
-            if (pricePerKwh < 10) option.style.color = "#4ade80"; // Roheline
-            else if (pricePerKwh > 30) option.style.color = "#f87171"; // Punane
+            if (pricePerKwh < 10) option.style.color = "#4ade80"; 
+            else if (pricePerKwh > 30) option.style.color = "#f87171"; 
             
             select.appendChild(option);
         });
@@ -117,7 +434,7 @@
         }
     }
 
-    // --- Ülejäänud nupufunktsioonid jäävad samaks ---
+    // --- Ülejäänud nupufunktsioonid ---
 
     function setPackageType(type) {
         currentMode = type;
@@ -134,7 +451,7 @@
             document.getElementById('fixedGroup').classList.remove('hidden');
         }
         document.getElementById('resultArea').style.display = 'none';
-        // Peida kohvinupp, kui vahetad paketti
+        
         const coffeeSection = document.getElementById('coffeeSection');
         if(coffeeSection) coffeeSection.classList.add('hidden');
     }
@@ -198,7 +515,6 @@
         const select = document.getElementById('startTimeSelect');
         const options = Array.from(select.options);
 
-        // Kontrolli, kas hinnad on üldse laetud
         if (options.length === 0 || isNaN(parseInt(options[0].value))) {
             alert("Hinnad pole laetud, ei saa arvutada.");
             return;
@@ -210,7 +526,6 @@
             let startIndex = electricityPrices.findIndex(p => p.timestamp === startTimestamp);
             let tempCost = 0;
             
-            // Kontrollime, kas andmed ulatuvad nii kaugele
             let validCalculation = true;
             for (let i = 0; i < Math.ceil(duration); i++) {
                 if (startIndex + i >= electricityPrices.length) {
@@ -236,10 +551,13 @@
             select.value = bestTimestamp;
             calculateCost(true);
         } else {
-            alert("Ei leidnud sobivat aega (võib-olla andmed lõppevad enne saunatamise lõppu otsa).");
+            alert("Ei leidnud sobivat aega.");
         }
     }
 
     // Käivita kohe
     fetchPrices();
 </script>
+
+</body>
+</html>
