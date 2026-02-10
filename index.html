@@ -13,6 +13,7 @@
             --success-color: #10b981;
             --input-bg: #334155;
             --secondary-text: #94a3b8;
+            --bmc-yellow: #FFDD00;
         }
 
         body {
@@ -178,6 +179,55 @@
             margin-bottom: 10px;
         }
 
+        /* --- UUS: Kohvinupu stiilid --- */
+        .coffee-container {
+            margin-top: 25px;
+            text-align: center;
+            border-top: 1px solid #334155;
+            padding-top: 20px;
+            animation: fadeIn 1s ease;
+        }
+
+        .coffee-label {
+            font-size: 0.85rem; 
+            color: #cbd5e1; 
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .btn-coffee {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background-color: var(--bmc-yellow);
+            color: #000000;
+            font-weight: 700;
+            text-decoration: none;
+            padding: 14px 24px;
+            border-radius: 50px;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 15px rgba(255, 221, 0, 0.2);
+            font-size: 1rem;
+        }
+
+        .btn-coffee:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(255, 221, 0, 0.4);
+        }
+
+        /* --- UUS: Jalus (Stripe nõue) --- */
+        .footer-legal {
+            margin-top: 40px;
+            font-size: 0.75rem;
+            color: #64748b;
+            text-align: center;
+            line-height: 1.6;
+            border-top: 1px solid #334155;
+            padding-top: 20px;
+        }
+        .footer-legal a { color: #64748b; text-decoration: underline; }
+
         .loading { text-align: center; color: var(--accent-color); display: none; margin-top: 20px;}
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
@@ -232,212 +282,4 @@
         <div style="margin-top: 15px;">
             <div class="input-group">
                 <label>Võrgutasu + marginaal (senti/kWh)</label>
-                <input type="number" id="fixedFees" value="7.0" step="0.1">
-            </div>
-            <div class="input-group">
-                <label>Kerise võimsus (kW)</label>
-                <input type="number" id="heaterPower" value="6">
-            </div>
-        </div>
-    </details>
-
-    <div id="loading" class="loading">Laen Eleringi andmeid...</div>
-
-    <div id="resultArea">
-        <div id="smartBadge" class="badge" style="display:none;">SOODSAIM VALIK!</div>
-        <div style="color:#94a3b8">Kogu sessiooni hind:</div>
-        <div class="cost-display" id="totalCost">0.00 €</div>
-        <div id="avgPriceInfo" style="font-size: 0.85rem; color: #cbd5e1;"></div>
-    </div>
-</div>
-
-<script>
-    const VAT = 1.24; // Käibemaks 24%
-    let electricityPrices = [];
-    let currentMode = 'exchange';
-
-    // See funktsioon proovib laadida hindu mitmest kohast
-    async function fetchPrices() {
-        document.getElementById('loading').style.display = 'block';
-        const start = new Date();
-        start.setHours(0,0,0,0);
-        const end = new Date();
-        end.setDate(end.getDate() + 1); 
-        end.setHours(23,59,59,999);
-        const eleringUrl = `https://dashboard.elering.ee/api/nps/price?start=${start.toISOString()}&end=${end.toISOString()}`;
-
-        try {
-            // Katse 1: Corsproxy.io (see, mis sul varem töötas)
-            console.log("Proovin meetodit 1...");
-            const r1 = await fetch('https://corsproxy.io/?' + encodeURIComponent(eleringUrl));
-            const d1 = await r1.json();
-            if (d1.data && d1.data.ee) {
-                electricityPrices = d1.data.ee;
-                populateTimeSelect();
-                document.getElementById('loading').style.display = 'none';
-                return; // Õnnestus, lõpetame
-            }
-        } catch (e) { console.log("Meetod 1 ebaõnnestus, proovin järgmist."); }
-
-        try {
-            // Katse 2: Allorigins (varuvariant)
-            console.log("Proovin meetodit 2...");
-            const r2 = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(eleringUrl)}`);
-            const d2 = await r2.json();
-            // Allorigins pakib vastuse 'contents' sisse
-            const actualData = JSON.parse(d2.contents);
-            if (actualData.data && actualData.data.ee) {
-                electricityPrices = actualData.data.ee;
-                populateTimeSelect();
-                document.getElementById('loading').style.display = 'none';
-                return;
-            }
-        } catch (e) { console.log("Kõik meetodid ebaõnnestusid."); }
-
-        // Kui jõuame siia, siis kõik ebaõnnestus
-        document.getElementById('loading').style.display = 'none';
-        const select = document.getElementById('startTimeSelect');
-        select.innerHTML = '<option>Hinnad ei laadinud :(</option>';
-        alert("Ei saanud hindu kätte. Proovi lehte värskendada või kasuta 'Fikseeritud' paketti.");
-    }
-
-    function populateTimeSelect() {
-        const select = document.getElementById('startTimeSelect');
-        select.innerHTML = '';
-        
-        const now = new Date();
-        now.setMinutes(0, 0, 0);
-
-        let hasFuturePrices = false;
-
-        electricityPrices.forEach(pricePoint => {
-            const time = new Date(pricePoint.timestamp * 1000);
-            if (time < now) return;
-            hasFuturePrices = true;
-
-            const pricePerKwh = (pricePoint.price / 10) * VAT;
-            const isToday = time.getDate() === now.getDate();
-            const dayStr = isToday ? "Täna" : "Homme";
-            const hourStr = time.getHours() + ":00";
-            
-            const option = document.createElement('option');
-            option.value = pricePoint.timestamp;
-            option.text = `${dayStr} ${hourStr} (börs: ${pricePerKwh.toFixed(1)} s/kWh)`;
-            
-            if (pricePerKwh < 10) option.style.color = "#4ade80"; 
-            select.appendChild(option);
-        });
-
-        if (!hasFuturePrices) {
-             select.innerHTML = '<option>Hinnad tulevad varsti...</option>';
-        }
-    }
-
-    // See funktsioon paneb nupud tööle
-    function setPackageType(type) {
-        currentMode = type;
-        document.getElementById('tabExchange').className = type === 'exchange' ? 'type-option active' : 'type-option';
-        document.getElementById('tabFixed').className = type === 'fixed' ? 'type-option active' : 'type-option';
-
-        if (type === 'exchange') {
-            document.getElementById('exchangeGroup').classList.remove('hidden');
-            document.getElementById('btnSmart').classList.remove('hidden');
-            document.getElementById('fixedGroup').classList.add('hidden');
-        } else {
-            document.getElementById('exchangeGroup').classList.add('hidden');
-            document.getElementById('btnSmart').classList.add('hidden');
-            document.getElementById('fixedGroup').classList.remove('hidden');
-        }
-        document.getElementById('resultArea').style.display = 'none';
-    }
-
-    function calculateCost(isSmart = false) {
-        const duration = parseFloat(document.getElementById('duration').value);
-        const fixedFees = parseFloat(document.getElementById('fixedFees').value);
-        const power = parseFloat(document.getElementById('heaterPower').value);
-        
-        let totalCost = 0;
-        let avgPriceDisp = 0;
-
-        if (currentMode === 'fixed') {
-            const userPrice = parseFloat(document.getElementById('userFixedPrice').value);
-            if (isNaN(userPrice)) { alert("Sisesta oma elektrihind!"); return; }
-            const fullPrice = userPrice + fixedFees;
-            totalCost = (fullPrice / 100) * power * duration;
-            avgPriceDisp = fullPrice;
-            document.getElementById('smartBadge').style.display = 'none';
-        } else {
-            const startTimestamp = parseInt(document.getElementById('startTimeSelect').value);
-            if (!startTimestamp) { alert("Oota hindu või vali Fikseeritud pakett!"); return; }
-
-            const startIndex = electricityPrices.findIndex(p => p.timestamp === startTimestamp);
-            let totalPriceSum = 0;
-
-            for (let i = 0; i < Math.ceil(duration); i++) {
-                if (startIndex + i >= electricityPrices.length) break;
-                let p = electricityPrices[startIndex + i];
-                let fullPrice = ((p.price / 10) * VAT) + fixedFees;
-                
-                let hoursInSlot = 1;
-                if (i === Math.ceil(duration) - 1 && duration % 1 !== 0) {
-                    hoursInSlot = duration % 1;
-                }
-                totalCost += (fullPrice / 100) * power * hoursInSlot;
-                totalPriceSum += fullPrice * hoursInSlot;
-            }
-            avgPriceDisp = totalPriceSum / duration;
-            document.getElementById('smartBadge').style.display = isSmart ? 'inline-block' : 'none';
-        }
-
-        const resultArea = document.getElementById('resultArea');
-        resultArea.style.display = 'block';
-        document.getElementById('totalCost').innerText = totalCost.toFixed(2) + " €";
-        document.getElementById('avgPriceInfo').innerText = 
-            `Arvestuslik kWh hind kokku: ${avgPriceDisp.toFixed(1)} s/kWh`;
-    }
-
-    function findCheapestAndSet() {
-        if (currentMode !== 'exchange') return;
-        const duration = parseFloat(document.getElementById('duration').value);
-        const fixedFees = parseFloat(document.getElementById('fixedFees').value);
-        
-        let bestCost = Infinity;
-        let bestTimestamp = null;
-        const select = document.getElementById('startTimeSelect');
-        const options = Array.from(select.options);
-
-        options.forEach(option => {
-            let startTimestamp = parseInt(option.value);
-            if(!startTimestamp) return;
-            let startIndex = electricityPrices.findIndex(p => p.timestamp === startTimestamp);
-            let tempCost = 0;
-            
-            for (let i = 0; i < Math.ceil(duration); i++) {
-                if (startIndex + i >= electricityPrices.length) return;
-                let p = electricityPrices[startIndex + i];
-                let fullPrice = ((p.price / 10) * VAT) + fixedFees;
-                let hoursInSlot = 1;
-                if (i === Math.ceil(duration) - 1 && duration % 1 !== 0) {
-                    hoursInSlot = duration % 1;
-                }
-                tempCost += fullPrice * hoursInSlot;
-            }
-
-            if (tempCost < bestCost) {
-                bestCost = tempCost;
-                bestTimestamp = startTimestamp;
-            }
-        });
-
-        if (bestTimestamp) {
-            select.value = bestTimestamp;
-            calculateCost(true);
-        }
-    }
-
-    // Käivitame
-    fetchPrices();
-</script>
-
-</body>
-</html>
+                <input type="number" id
