@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://saun.lessgo.ee/sitemap.xml
