@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html lang="et">
 <head>
-    <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-E7WNGX4Q6W"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E7WNGX4Q6W"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
 
-  gtag('config', 'G-E7WNGX4Q6W');
-</script>
+      gtag('config', 'G-E7WNGX4Q6W');
+    </script>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
@@ -220,7 +220,6 @@
             margin-bottom: 10px;
         }
 
-        /* --- Kohvinupu stiilid --- */
         .coffee-container {
             margin-top: 25px;
             text-align: center;
@@ -257,7 +256,6 @@
             box-shadow: 0 6px 20px rgba(255, 221, 0, 0.4);
         }
 
-        /* --- Jalus --- */
         .footer-legal {
             margin-top: 40px;
             font-size: 0.75rem;
@@ -269,7 +267,6 @@
         }
         .footer-legal a { color: #64748b; text-decoration: underline; }
 
-        /* SEO tekstiosa stiil */
         .seo-details {
             margin-top: 30px; 
             text-align: left; 
@@ -384,7 +381,6 @@
     let electricityPrices = [];
     let currentMode = 'exchange';
 
-    // Aitab oodata (timeout), et fetch ei jääks igavesti rippuma
     const fetchWithTimeout = async (resource, options = {}) => {
         const { timeout = 5000 } = options;
         const controller = new AbortController();
@@ -394,7 +390,6 @@
         return response;
     };
 
-    // See funktsioon proovib laadida hindu mitmest kohast (3 meetodit)
     async function fetchPrices() {
         document.getElementById('loading').style.display = 'block';
         const select = document.getElementById('startTimeSelect');
@@ -406,69 +401,42 @@
         end.setDate(end.getDate() + 1); 
         end.setHours(23,59,59,999);
         
-        // Eleringi originaalaadress
         const eleringUrl = `https://dashboard.elering.ee/api/nps/price?start=${start.toISOString()}&end=${end.toISOString()}`;
 
-        // 1. KATSE: Corsproxy.io
+        // Meetod 1: Corsproxy.io
         try {
-            console.log("Proovin meetodit 1 (Corsproxy)...");
             const r1 = await fetchWithTimeout('https://corsproxy.io/?' + encodeURIComponent(eleringUrl));
             if (!r1.ok) throw new Error('Viga');
             const d1 = await r1.json();
-            if (d1.data && d1.data.ee) {
-                success(d1.data.ee);
-                return;
-            }
-        } catch (e) { console.log("Meetod 1 ebaõnnestus."); }
+            if (d1.data && d1.data.ee) { success(d1.data.ee); return; }
+        } catch (e) { console.log("M1 viga"); }
 
-        // 2. KATSE: Allorigins
+        // Meetod 2: Allorigins
         try {
-            console.log("Proovin meetodit 2 (Allorigins)...");
             const r2 = await fetchWithTimeout(`https://api.allorigins.win/get?url=${encodeURIComponent(eleringUrl)}`);
             if (!r2.ok) throw new Error('Viga');
             const d2 = await r2.json();
             const actualData = JSON.parse(d2.contents);
-            if (actualData.data && actualData.data.ee) {
-                success(actualData.data.ee);
-                return;
-            }
-        } catch (e) { console.log("Meetod 2 ebaõnnestus."); }
+            if (actualData.data && actualData.data.ee) { success(actualData.data.ee); return; }
+        } catch (e) { console.log("M2 viga"); }
 
-        // 3. KATSE: Codetabs (uus varuvariant)
-        try {
-            console.log("Proovin meetodit 3 (Codetabs)...");
-            const r3 = await fetchWithTimeout(`https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(eleringUrl)}`);
-            if (!r3.ok) throw new Error('Viga');
-            const d3 = await r3.json();
-            if (d3.data && d3.data.ee) {
-                success(d3.data.ee);
-                return;
-            }
-        } catch (e) { console.log("Meetod 3 ebaõnnestus."); }
-
-        // KUI KÕIK EBAÕNNESTUS
         document.getElementById('loading').style.display = 'none';
         select.innerHTML = '<option>Viga andmete laadimisel :(</option>';
-        alert("Kahjuks ei saanud Eleringist hindu kätte (kõik vahendajad on maas). Proovi hiljem uuesti või kasuta Fikseeritud paketti.");
     }
 
-    // Abifunktsioon, kui andmed saadi kätte
     function success(data) {
         electricityPrices = data;
         populateTimeSelect();
         document.getElementById('loading').style.display = 'none';
-        console.log("Hinnad edukalt laetud!");
     }
 
     function populateTimeSelect() {
         const select = document.getElementById('startTimeSelect');
         select.innerHTML = '';
-        
         const now = new Date();
         now.setMinutes(0, 0, 0);
 
         let hasFuturePrices = false;
-
         electricityPrices.forEach(pricePoint => {
             const time = new Date(pricePoint.timestamp * 1000);
             if (time < now && time.getHours() !== now.getHours()) return;
@@ -481,22 +449,10 @@
             
             const option = document.createElement('option');
             option.value = pricePoint.timestamp;
-            
-            // Visuaalne lisa: näita hinda rippmenüüs
             option.text = `${dayStr} ${hourStr} (${pricePerKwh.toFixed(1)} s/kWh)`;
-            
-            if (pricePerKwh < 10) option.style.color = "#4ade80"; 
-            else if (pricePerKwh > 30) option.style.color = "#f87171"; 
-            
             select.appendChild(option);
         });
-
-        if (!hasFuturePrices) {
-             select.innerHTML = '<option>Hinnad tulevad varsti...</option>';
-        }
     }
-
-    // --- Ülejäänud nupufunktsioonid ---
 
     function setPackageType(type) {
         currentMode = type;
@@ -513,12 +469,12 @@
             document.getElementById('fixedGroup').classList.remove('hidden');
         }
         document.getElementById('resultArea').style.display = 'none';
-        
-        const coffeeSection = document.getElementById('coffeeSection');
-        if(coffeeSection) coffeeSection.classList.add('hidden');
     }
 
     function calculateCost(isSmart = false) {
+        // ANALÜÜTIKA SÜNDMUS: Kulu arvutamine
+        gtag('event', 'calculate_cost', { 'mode': currentMode });
+
         const duration = parseFloat(document.getElementById('duration').value);
         const fixedFees = parseFloat(document.getElementById('fixedFees').value);
         const power = parseFloat(document.getElementById('heaterPower').value);
@@ -532,10 +488,9 @@
             const fullPrice = userPrice + fixedFees;
             totalCost = (fullPrice / 100) * power * duration;
             avgPriceDisp = fullPrice;
-            document.getElementById('smartBadge').style.display = 'none';
         } else {
             const startTimestamp = parseInt(document.getElementById('startTimeSelect').value);
-            if (!startTimestamp) { alert("Oota hindu või vali Fikseeritud pakett!"); return; }
+            if (!startTimestamp) { alert("Oota hindu!"); return; }
 
             const startIndex = electricityPrices.findIndex(p => p.timestamp === startTimestamp);
             let totalPriceSum = 0;
@@ -553,21 +508,19 @@
                 totalPriceSum += fullPrice * hoursInSlot;
             }
             avgPriceDisp = totalPriceSum / duration;
-            document.getElementById('smartBadge').style.display = isSmart ? 'inline-block' : 'none';
         }
 
-        const resultArea = document.getElementById('resultArea');
-        resultArea.style.display = 'block';
+        document.getElementById('resultArea').style.display = 'block';
         document.getElementById('totalCost').innerText = totalCost.toFixed(2) + " €";
-        document.getElementById('avgPriceInfo').innerText = 
-            `Arvestuslik kWh hind kokku: ${avgPriceDisp.toFixed(1)} s/kWh`;
-            
-        // Näita kohvinuppu
-        const coffeeSection = document.getElementById('coffeeSection');
-        if(coffeeSection) coffeeSection.classList.remove('hidden');
+        document.getElementById('avgPriceInfo').innerText = `Arvestuslik kWh hind kokku: ${avgPriceDisp.toFixed(1)} s/kWh`;
+        document.getElementById('smartBadge').style.display = isSmart ? 'inline-block' : 'none';
+        document.getElementById('coffeeSection').classList.remove('hidden');
     }
 
     function findCheapestAndSet() {
+        // ANALÜÜTIKA SÜNDMUS: Nutika aja otsing
+        gtag('event', 'find_cheapest_time');
+
         if (currentMode !== 'exchange') return;
         const duration = parseFloat(document.getElementById('duration').value);
         const fixedFees = parseFloat(document.getElementById('fixedFees').value);
@@ -577,33 +530,20 @@
         const select = document.getElementById('startTimeSelect');
         const options = Array.from(select.options);
 
-        if (options.length === 0 || isNaN(parseInt(options[0].value))) {
-            alert("Hinnad pole laetud, ei saa arvutada.");
-            return;
-        }
-
         options.forEach(option => {
             let startTimestamp = parseInt(option.value);
             if(!startTimestamp) return;
             let startIndex = electricityPrices.findIndex(p => p.timestamp === startTimestamp);
             let tempCost = 0;
-            
-            let validCalculation = true;
+            let valid = true;
+
             for (let i = 0; i < Math.ceil(duration); i++) {
-                if (startIndex + i >= electricityPrices.length) {
-                    validCalculation = false;
-                    break;
-                }
+                if (startIndex + i >= electricityPrices.length) { valid = false; break; }
                 let p = electricityPrices[startIndex + i];
-                let fullPrice = ((p.price / 10) * VAT) + fixedFees;
-                let hoursInSlot = 1;
-                if (i === Math.ceil(duration) - 1 && duration % 1 !== 0) {
-                    hoursInSlot = duration % 1;
-                }
-                tempCost += fullPrice * hoursInSlot;
+                tempCost += ((p.price / 10) * VAT) + fixedFees;
             }
 
-            if (validCalculation && tempCost < bestCost) {
+            if (valid && tempCost < bestCost) {
                 bestCost = tempCost;
                 bestTimestamp = startTimestamp;
             }
@@ -612,15 +552,11 @@
         if (bestTimestamp) {
             select.value = bestTimestamp;
             calculateCost(true);
-        } else {
-            alert("Ei leidnud sobivat aega.");
         }
     }
 
-    // Käivita kohe
     fetchPrices();
 </script>
 
 </body>
 </html>
-
