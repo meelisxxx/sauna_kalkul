@@ -23,16 +23,16 @@
         }
         body { font-family: 'Inter', sans-serif; background-color: var(--bg-color); color: var(--text-color); display: flex; justify-content: center; min-height: 100vh; margin: 0; padding: 20px; }
         .container { background-color: var(--card-color); padding: 2.5rem; border-radius: 24px; max-width: 450px; width: 100%; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3); }
-        h1 { color: var(--accent-color); text-align: center; font-size: 2rem; }
-        .tabs { display: flex; background: var(--input-bg); border-radius: 12px; padding: 4px; margin-bottom: 20px; }
-        .tab { flex: 1; text-align: center; padding: 12px; border-radius: 9px; cursor: pointer; font-weight: bold; color: var(--secondary-text); }
+        h1 { color: var(--accent-color); text-align: center; font-size: 2rem; margin-top: 0; }
+        .tabs { display: flex; background: var(--input-bg); border-radius: 12px; padding: 4px; margin-bottom: 25px; }
+        .tab { flex: 1; text-align: center; padding: 12px; border-radius: 9px; cursor: pointer; font-weight: bold; color: var(--secondary-text); transition: 0.2s; }
         .tab.active { background: var(--accent-color); color: #0f172a; }
         .input-group { margin-bottom: 20px; }
-        label { display: block; margin-bottom: 8px; font-size: 0.9rem; }
-        select, input { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #475569; background: var(--input-bg); color: white; font-size: 1rem; box-sizing: border-box; }
-        .btn-calc { background: var(--accent-color); color: #0f172a; border: none; padding: 18px; border-radius: 15px; width: 100%; font-weight: 800; cursor: pointer; margin-bottom: 10px; font-size: 1.1rem; }
+        label { display: block; margin-bottom: 8px; font-size: 0.9rem; color: #cbd5e1; }
+        select, input { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #475569; background: var(--input-bg); color: white; font-size: 1rem; box-sizing: border-box; appearance: none; }
+        .btn-calc { background: var(--accent-color); color: #0f172a; border: none; padding: 18px; border-radius: 15px; width: 100%; font-weight: 800; cursor: pointer; margin-bottom: 15px; font-size: 1.1rem; }
         .btn-best { background: transparent; color: var(--success-color); border: 2px solid var(--success-color); padding: 15px; border-radius: 15px; width: 100%; font-weight: bold; cursor: pointer; }
-        .footer { text-align: center; margin-top: 30px; font-size: 0.8rem; color: var(--secondary-text); border-top: 1px solid #475569; padding-top: 20px; line-height: 1.6; }
+        .footer { text-align: center; margin-top: 40px; font-size: 0.75rem; color: var(--secondary-text); border-top: 1px solid #475569; padding-top: 20px; line-height: 1.6; }
         #loading { text-align: center; color: var(--accent-color); margin-bottom: 10px; display: none; }
     </style>
 </head>
@@ -56,14 +56,8 @@
     <div class="input-group" id="startTimeGroup">
         <label>Millal alustad kütmist?</label>
         <select id="startTimeSelect">
-            <option>Viga andmete laadimisel :(</option>
+            <option>Laadin andmeid...</option>
         </select>
-    </div>
-    <div id="fixedGroup" style="display:none;">
-        <div class="input-group">
-            <label>Sinu fikseeritud hind (senti/kWh)</label>
-            <input type="number" id="fixedPrice" value="15">
-        </div>
     </div>
     <button class="btn-calc" onclick="calculate()">🔥 Arvuta kulu</button>
     <button class="btn-best" onclick="findBest()">🌱 Leia soodsaim aeg</button>
@@ -72,12 +66,11 @@
         LessGo OÜ | Reg: 16914274<br>
         Langerma küla, Põhja-Pärnumaa vald<br>
         Kontakt: meelis@lessgo.ee<br>
-        <a href="#" style="color:var(--secondary-text)">Privaatsus ja tingimused</a>
+        <a href="#" style="color:var(--secondary-text); text-decoration: underline;">Privaatsus ja tingimused</a>
     </div>
 </div>
 <script>
     let electricityPrices = [];
-    let currentMode = 'exchange';
     const fetchWithTimeout = async (resource, options = {}) => {
         const { timeout = 5000 } = options;
         const controller = new AbortController();
@@ -100,7 +93,7 @@
                 const res = await fetchWithTimeout(url);
                 const data = await res.json();
                 const actualData = data.contents ? JSON.parse(data.contents) : data;
-                if (actualData && actualData.data && actualData.data.ee) {
+                if (actualData?.data?.ee) {
                     electricityPrices = actualData.data.ee;
                     populateTimeSelect();
                     document.getElementById('loading').style.display = 'none';
@@ -120,38 +113,28 @@
             if (time >= now) {
                 const opt = document.createElement('option');
                 opt.value = p.timestamp;
-                opt.text = `${time.getHours()}:00 (${(p.price/10).toFixed(1)} s/kWh)`;
+                const pricePerKwh = (p.price / 10).toFixed(1);
+                opt.text = `${time.getHours()}:00 (${pricePerKwh} s/kWh)`;
+                if (pricePerKwh < 10) opt.style.color = "#4ade80";
+                else if (pricePerKwh > 30) opt.style.color = "#f87171";
                 select.appendChild(opt);
             }
         });
     }
-    function setMode(mode) {
-        currentMode = mode;
-        document.getElementById('tabExchange').className = mode === 'exchange' ? 'tab active' : 'tab';
-        document.getElementById('tabFixed').className = mode === 'fixed' ? 'tab active' : 'tab';
-        document.getElementById('startTimeGroup').style.display = mode === 'exchange' ? 'block' : 'none';
-        document.getElementById('fixedGroup').style.display = mode === 'fixed' ? 'block' : 'none';
-    }
     function calculate() {
-        const power = 9; // Sinu kerise võimsus
+        const power = 9; 
         const duration = parseFloat(document.getElementById('duration').value);
+        const startTime = parseInt(document.getElementById('startTimeSelect').value);
+        const startIndex = electricityPrices.findIndex(p => p.timestamp === startTime);
         let cost = 0;
-        if (currentMode === 'exchange') {
-            const startTime = parseInt(document.getElementById('startTimeSelect').value);
-            const startIndex = electricityPrices.findIndex(p => p.timestamp === startTime);
-            for (let i = 0; i < duration; i++) {
-                if (electricityPrices[startIndex + i]) {
-                    cost += (electricityPrices[startIndex + i].price / 1000) * power;
-                }
+        for (let i = 0; i < duration; i++) {
+            if (electricityPrices[startIndex + i]) {
+                cost += (electricityPrices[startIndex + i].price / 1000) * power;
             }
-        } else {
-            const fixedPrice = parseFloat(document.getElementById('fixedPrice').value) / 100;
-            cost = power * duration * fixedPrice;
         }
         document.getElementById('resultArea').innerText = `Kütmise kulu: ${cost.toFixed(2)} €`;
     }
     function findBest() {
-        if (electricityPrices.length === 0) return;
         const power = 9;
         const duration = parseFloat(document.getElementById('duration').value);
         let minCost = Infinity;
