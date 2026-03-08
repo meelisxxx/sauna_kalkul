@@ -13,7 +13,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <title>SaunaMaster Pro - Leia soodsaim saunaaeg ⚡</title>
-    <meta name="description" content="Tasuta sauna elektrihinna kalkulaator. Arvuta täpne sauna kütmise kulu vastavalt Nord Pool elektri börsihinnale ja leia soodsaim aeg saunatamiseks.">
+    <meta name="description" content="Tasuta sauna elektrihinna kalkulaator. Arvuta sauna kütmise kulu vastavalt Nord Pooli hinnale.">
     
     <style>
         :root {
@@ -24,11 +24,10 @@
             --success-color: #10b981;
             --input-bg: #334155;
             --secondary-text: #94a3b8;
-            --bmc-yellow: #FFDD00;
         }
 
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Inter', -apple-system, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
             display: flex;
@@ -51,92 +50,125 @@
         h1 {
             color: var(--accent-color);
             text-align: center;
-            margin-top: 0;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
+            font-size: 1.8rem;
         }
 
-        .input-group { margin-bottom: 1.5rem; }
+        .input-group { margin-bottom: 1.2rem; }
         
         label {
             display: block;
             margin-bottom: 0.5rem;
             font-size: 0.85rem;
             color: #cbd5e1;
-            font-weight: 500;
         }
 
-        input, select {
+        input {
             width: 100%;
-            padding: 14px;
-            border-radius: 12px;
+            padding: 12px;
+            border-radius: 10px;
             border: 1px solid #475569;
             background-color: var(--input-bg);
             color: white;
             font-size: 1rem;
             box-sizing: border-box;
-            appearance: none;
-            transition: border-color 0.2s;
-        }
-        
-        input:focus, select:focus {
-            border-color: var(--accent-color);
-            outline: none;
-        }
-
-        .select-wrapper { position: relative; }
-        .select-wrapper::after {
-            content: '▼';
-            font-size: 0.8rem;
-            color: var(--accent-color);
-            position: absolute;
-            right: 15px; top: 18px;
-            pointer-events: none;
-        }
-
-        .type-selector {
-            display: flex;
-            background: var(--input-bg);
-            padding: 4px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-        }
-
-        .type-option {
-            flex: 1;
-            text-align: center;
-            padding: 10px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: var(--secondary-text);
-            transition: all 0.2s;
-        }
-
-        .type-option.active {
-            background-color: var(--accent-color);
-            color: #0f172a;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
-
-        .btn-group {
-            display: flex;
-            gap: 10px;
-            flex-direction: column;
-            margin-top: 20px;
         }
 
         button {
             width: 100%;
             padding: 16px;
             border: none;
-            border-radius: 14px;
-            font-size: 1rem;
-            font-weight: 600;
+            border-radius: 12px;
+            background-color: var(--accent-color);
+            color: #0f172a;
+            font-size: 1.1rem;
+            font-weight: bold;
             cursor: pointer;
-            transition: transform 0.1s;
+            transition: all 0.2s;
+            margin-top: 10px;
+        }
+
+        button:hover { opacity: 0.9; transform: translateY(-1px); }
+
+        #tulemus {
+            margin-top: 25px;
+            padding: 15px;
+            border-radius: 12px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid var(--success-color);
+            display: none;
+        }
+
+        .price-tag {
+            font-size: 2rem;
+            display: block;
+            color: var(--success-color);
+            margin: 10px 0;
         }
         
-        button:active { transform: scale(0.98); }
-        .btn-calc { background-color: var(--accent-color); color: #0f172a; }
-        .btn-
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.7rem;
+            color: var(--secondary-text);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>SaunaMaster Pro ⚡</h1>
+        
+        <div class="input-group">
+            <label>Kerise võimsus (kW)</label>
+            <input type="number" id="power" value="9" step="0.5">
+        </div>
+
+        <div class="input-group">
+            <label>Kütmise aeg (tundi)</label>
+            <input type="number" id="time" value="1.5" step="0.5">
+        </div>
+
+        <button onclick="arvuta()">Arvuta kulu</button>
+
+        <div id="tulemus">
+            <span style="font-size: 0.9rem;">Hinnanguline kulu hetke börsihinnaga:</span>
+            <span class="price-tag" id="summa">0.00 €</span>
+            <span id="hetke-hind" style="font-size: 0.8rem; color: var(--secondary-text);">Börsihind: -- c/kWh</span>
+        </div>
+
+        <div class="footer">
+            Andmed: Nord Pool / Elering API
+        </div>
+    </div>
+
+    <script>
+        async function arvuta() {
+            const power = document.getElementById('power').value;
+            const hours = document.getElementById('time').value;
+            const resDiv = document.getElementById('tulemus');
+            
+            try {
+                // Küsime Eleringi API-st viimase tunni hinna
+                const response = await fetch('https://dashboard.elering.ee/api/nps/price/EE/current');
+                const data = await response.json();
+                
+                if (data.success) {
+                    const mwhPrice = data.data[0].price; // Hind on EUR/MWh
+                    const kwhPriceCents = mwhPrice / 10; // Teisendame senti/kWh
+                    const kwhPriceEur = mwhPrice / 1000; // Teisendame EUR/kWh
+                    
+                    const kokku = (power * hours * kwhPriceEur).toFixed(2);
+                    
+                    document.getElementById('summa').innerText = kokku + " €";
+                    document.getElementById('hetke-hind').innerText = "Hetke börsihind: " + kwhPriceCents.toFixed(2) + " senti/kWh";
+                    resDiv.style.display = 'block';
+                }
+            } catch (error) {
+                alert("Viga andmete pärimisel. Kontrolli internetiühendust!");
+                console.error(error);
+            }
+        }
+    </script>
+</body>
+</html>
