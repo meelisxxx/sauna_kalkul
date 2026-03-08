@@ -144,4 +144,47 @@
         document.getElementById('tulemus').style.display = 'none';
     }
 
-    async function findBest
+    async function findBestTime() {
+        const power = parseFloat(document.getElementById('power').value);
+        const duration = parseFloat(document.getElementById('duration').value);
+        const resDiv = document.getElementById('tulemus');
+        resDiv.innerHTML = "Analüüsin börsihindu...";
+        resDiv.style.display = 'block';
+
+        try {
+            const response = await fetch('https://dashboard.elering.ee/api/nps/price/EE/current');
+            const data = await response.json();
+            
+            if (data.success) {
+                const prices = data.data; // Järgmise 24h hinnad
+                let bestStart = null;
+                let minCost = Infinity;
+
+                // Leiame odavaima akna
+                for (let i = 0; i <= prices.length - Math.ceil(duration); i++) {
+                    let currentWindowCost = 0;
+                    for (let j = 0; j < Math.ceil(duration); j++) {
+                        currentWindowCost += (prices[i + j].price / 1000) * power;
+                    }
+                    if (currentWindowCost < minCost) {
+                        minCost = currentWindowCost;
+                        bestStart = prices[i];
+                    }
+                }
+
+                const startTime = new Date(bestStart.timestamp * 1000).toLocaleTimeString('et-EE', {hour: '2-digit', minute:'2-digit'});
+                
+                resDiv.innerHTML = `
+                    <strong>Soodsaim aeg alustamiseks: kell ${startTime}</strong><br>
+                    Hinnanguline kulu: <strong>${minCost.toFixed(2)} €</strong><br>
+                    <small>Keskmine börsihind sel ajal: ${(bestStart.price / 10).toFixed(2)} s/kWh</small>
+                `;
+            }
+        } catch (e) {
+            resDiv.innerHTML = "Viga andmete pärimisel. Proovi hiljem uuesti.";
+        }
+    }
+</script>
+
+</body>
+</html>
