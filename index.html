@@ -1,386 +1,83 @@
 <!DOCTYPE html>
 <html lang="et">
 <head>
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-E7WNGX4Q6W"></script>
-<script>
-window.dataLayer = window.dataLayer || [];
-function gtag(){dataLayer.push(arguments);}
-gtag('js', new Date());
-
-gtag('config', 'G-E7WNGX4Q6W');
-</script>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>SaunaMaster Pro - Leia soodsaim saunaaeg ⚡</title>
-<meta name="description" content="Tasuta sauna elektrihinna kalkulaator. Arvuta täpne sauna kütmise kulu vastavalt Nord Pool elektri börsihinnale ja leia soodsaim aeg saunatamiseks.">
-    <meta name="keywords" content="saun, elektrihind, börsielekter, sauna kütmine, elektriarve, saunakalkulaator, nord pool, kokkuhoid, energiasääst">
-    <meta name="author" content="LessGo OÜ">
-
-    <meta property="og:title" content="SaunaMaster Pro - Küta sauna targalt ⚡">
-    <meta property="og:description" content="Ära küta raha ahju! Vaata, millal on elekter odav ja arvuta sauna kütmise kulu sekundiga.">
-    <meta property="og:url" content="https://saun.lessgo.ee">
-    <meta property="og:type" content="website">
-
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebApplication",
-      "name": "SaunaMaster Pro",
-      "url": "https://saun.lessgo.ee",
-      "description": "Kalkulaator, mis aitab leida soodsaima aja sauna kütmiseks, kasutades reaalajas elektri börsihindu.",
-      "applicationCategory": "UtilitiesApplication",
-      "operatingSystem": "All",
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "EUR"
-      },
-      "author": {
-        "@type": "Organization",
-        "name": "LessGo OÜ",
-        "url": "https://saun.lessgo.ee"
-      }
-    }
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E7WNGX4Q6W"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-E7WNGX4Q6W');
     </script>
-
-<style>
-:root {
---bg-color: #0f172a;
---card-color: #1e293b;
---text-color: #f8fafc;
---accent-color: #f59e0b;
---success-color: #10b981;
---input-bg: #334155;
---secondary-text: #94a3b8;
---bmc-yellow: #FFDD00;
-}
-
-body {
-font-family: 'Inter', sans-serif;
-background-color: var(--bg-color);
-color: var(--text-color);
-display: flex;
-justify-content: center;
-align-items: center;
-min-height: 100vh;
-margin: 0;
-padding: 20px;
-}
-
-.container {
-background-color: var(--card-color);
-padding: 2rem;
-border-radius: 24px;
-box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
-max-width: 420px;
-width: 100%;
-}
-
-h1 {
-color: var(--accent-color);
-text-align: center;
-margin-top: 0;
-margin-bottom: 20px;
-}
-
-.input-group { margin-bottom: 1.5rem; }
-
-label {
-display: block;
-margin-bottom: 0.5rem;
-font-size: 0.85rem;
-color: #cbd5e1;
-font-weight: 500;
-}
-
-input, select {
-width: 100%;
-padding: 14px;
-border-radius: 12px;
-border: 1px solid #475569;
-background-color: var(--input-bg);
-color: white;
-font-size: 1rem;
-box-sizing: border-box;
-appearance: none;
-transition: border-color 0.2s;
-}
-
-input:focus, select:focus {
-border-color: var(--accent-color);
-outline: none;
-}
-
-.select-wrapper { position: relative; }
-.select-wrapper::after {
-content: '▼';
-font-size: 0.8rem;
-color: var(--accent-color);
-position: absolute;
-right: 15px; top: 18px;
-pointer-events: none;
-}
-
-.type-selector {
-display: flex;
-background: var(--input-bg);
-padding: 4px;
-border-radius: 12px;
-margin-bottom: 20px;
-}
-
-.type-option {
-flex: 1;
-text-align: center;
-padding: 10px;
-border-radius: 8px;
-cursor: pointer;
-font-size: 0.9rem;
-font-weight: 600;
-color: var(--secondary-text);
-transition: all 0.2s;
-}
-
-.type-option.active {
-background-color: var(--accent-color);
-color: #0f172a;
-box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-}
-
-.btn-group {
-display: flex;
-gap: 10px;
-flex-direction: column;
-margin-top: 20px;
-}
-
-button {
-width: 100%;
-padding: 16px;
-border: none;
-border-radius: 14px;
-font-size: 1rem;
-font-weight: 600;
-cursor: pointer;
-transition: transform 0.1s;
-}
-
-button:active { transform: scale(0.98); }
-
-.btn-calc { background-color: var(--accent-color); color: #0f172a; }
-        
-        .btn-smart {
-            background-color: transparent;
-            border: 2px solid var(--success-color);
-            color: var(--success-color);
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SaunaMaster Pro ⚡</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-color: #1e293b;
+            --text-color: #f8fafc;
+            --accent-color: #f59e0b;
+            --success-color: #10b981;
+            --input-bg: #334155;
+            --secondary-text: #94a3b8;
         }
-
-        .hidden { display: none !important; }
-
-        details {
-            margin-top: 20px;
-            color: var(--secondary-text);
-            font-size: 0.9rem;
-            cursor: pointer;
-            padding: 10px;
-            background: rgba(255,255,255,0.03);
-            border-radius: 8px;
-        }
-        summary { font-weight: 500; }
-
-        #resultArea {
-            margin-top: 2rem;
-            padding: 20px;
-            background: rgba(0,0,0,0.2);
-            border-radius: 16px;
-            text-align: center;
-            display: none;
-            border: 1px solid #334155;
-            animation: fadeIn 0.5s ease;
-        }
-
-        .cost-display {
-            font-size: 3rem;
-            font-weight: 800;
-            color: var(--accent-color);
-            margin: 10px 0;
-            line-height: 1;
-        }
-        
-        .badge {
-            background: var(--success-color);
-            color: #0f172a;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: bold;
-            display: inline-block;
-            margin-bottom: 10px;
-        }
-
-        .coffee-container {
-            margin-top: 25px;
-            text-align: center;
-            border-top: 1px solid #334155;
-            padding-top: 20px;
-            animation: fadeIn 1s ease;
-        }
-
-        .coffee-label {
-            font-size: 0.85rem; 
-            color: #cbd5e1; 
-            margin-bottom: 12px;
-            display: block;
-        }
-
-        .btn-coffee {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            background-color: var(--bmc-yellow);
-            color: #000000;
-            font-weight: 700;
-            text-decoration: none;
-            padding: 14px 24px;
-            border-radius: 50px;
-            transition: all 0.2s ease;
-            box-shadow: 0 4px 15px rgba(255, 221, 0, 0.2);
-            font-size: 1rem;
-        }
-
-        .btn-coffee:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(255, 221, 0, 0.4);
-        }
-
-        .footer-legal {
-            margin-top: 40px;
-            font-size: 0.75rem;
-            color: #64748b;
-            text-align: center;
-            line-height: 1.6;
-            border-top: 1px solid #334155;
-            padding-top: 20px;
-        }
-        .footer-legal a { color: #64748b; text-decoration: underline; }
-
-        .seo-details {
-            margin-top: 30px; 
-            text-align: left; 
-            color: #94a3b8; 
-            font-size: 0.9rem;
-            border-radius: 12px;
-            background: rgba(255,255,255,0.02);
-            padding: 5px;
-        }
-        .seo-details summary { padding: 10px; cursor: pointer; font-weight: 500; }
-        .seo-content { padding: 0 15px 15px 15px; line-height: 1.6; }
-
-        .loading { text-align: center; color: var(--accent-color); display: none; margin-top: 20px;}
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-color); color: var(--text-color); display: flex; justify-content: center; min-height: 100vh; margin: 0; padding: 20px; }
+        .container { background-color: var(--card-color); padding: 2.5rem; border-radius: 24px; max-width: 450px; width: 100%; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3); }
+        h1 { color: var(--accent-color); text-align: center; font-size: 2rem; }
+        .tabs { display: flex; background: var(--input-bg); border-radius: 12px; padding: 4px; margin-bottom: 20px; }
+        .tab { flex: 1; text-align: center; padding: 12px; border-radius: 9px; cursor: pointer; font-weight: bold; color: var(--secondary-text); }
+        .tab.active { background: var(--accent-color); color: #0f172a; }
+        .input-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-size: 0.9rem; }
+        select, input { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #475569; background: var(--input-bg); color: white; font-size: 1rem; box-sizing: border-box; }
+        .btn-calc { background: var(--accent-color); color: #0f172a; border: none; padding: 18px; border-radius: 15px; width: 100%; font-weight: 800; cursor: pointer; margin-bottom: 10px; font-size: 1.1rem; }
+        .btn-best { background: transparent; color: var(--success-color); border: 2px solid var(--success-color); padding: 15px; border-radius: 15px; width: 100%; font-weight: bold; cursor: pointer; }
+        .footer { text-align: center; margin-top: 30px; font-size: 0.8rem; color: var(--secondary-text); border-top: 1px solid #475569; padding-top: 20px; line-height: 1.6; }
+        #loading { text-align: center; color: var(--accent-color); margin-bottom: 10px; display: none; }
     </style>
 </head>
 <body>
-
 <div class="container">
     <h1>SaunaMaster Pro ⚡</h1>
-    
-    <div class="type-selector">
-        <div class="type-option active" onclick="setPackageType('exchange')" id="tabExchange">Börsipakett</div>
-        <div class="type-option" onclick="setPackageType('fixed')" id="tabFixed">Fikseeritud</div>
+    <div class="tabs">
+        <div class="tab active" id="tabExchange" onclick="setMode('exchange')">Börsipakett</div>
+        <div class="tab" id="tabFixed" onclick="setMode('fixed')">Fikseeritud</div>
     </div>
-
+    <div id="loading">Andmete laadimine...</div>
     <div class="input-group">
         <label>Kui kaua saunas möllad?</label>
-        <div class="select-wrapper">
-            <select id="duration">
-                <option value="1">1 tund</option>
-                <option value="1.5">1.5 tundi</option>
-                <option value="2">2 tundi</option>
-                <option value="2.5">2.5 tundi</option>
-                <option value="3" selected>3 tundi</option>
-                <option value="3.5">3.5 tundi</option>
-                <option value="4">4 tundi</option>
-                <option value="5">5 tundi</option>
-            </select>
-        </div>
+        <select id="duration">
+            <option value="1">1 tund</option>
+            <option value="2">2 tundi</option>
+            <option value="3" selected>3 tundi</option>
+            <option value="4">4 tundi</option>
+        </select>
     </div>
-
-    <div id="exchangeGroup" class="input-group">
+    <div class="input-group" id="startTimeGroup">
         <label>Millal alustad kütmist?</label>
-        <div class="select-wrapper">
-            <select id="startTimeSelect">
-                <option>Laen kellaaegu...</option>
-            </select>
+        <select id="startTimeSelect">
+            <option>Viga andmete laadimisel :(</option>
+        </select>
+    </div>
+    <div id="fixedGroup" style="display:none;">
+        <div class="input-group">
+            <label>Sinu fikseeritud hind (senti/kWh)</label>
+            <input type="number" id="fixedPrice" value="15">
         </div>
     </div>
-
-    <div id="fixedGroup" class="input-group hidden">
-        <label>Sinu elektri hind (senti/kWh)</label>
-        <input type="number" id="userFixedPrice" placeholder="Nt. 12.5" step="0.1">
-    </div>
-
-    <div class="btn-group">
-        <button class="btn-calc" onclick="calculateCost()">🔥 Arvuta kulu</button>
-        <button id="btnSmart" class="btn-smart" onclick="findCheapestAndSet()">🌱 Leia soodsaim aeg</button>
-    </div>
-
-    <details>
-        <summary>⚙️ Täpsemad seaded</summary>
-        <div style="margin-top: 15px;">
-            <div class="input-group">
-                <label>Võrgutasu + marginaal (senti/kWh)</label>
-                <input type="number" id="fixedFees" value="7.0" step="0.1">
-            </div>
-            <div class="input-group">
-                <label>Kerise võimsus (kW)</label>
-                <input type="number" id="heaterPower" value="6">
-            </div>
-        </div>
-    </details>
-
-    <div id="loading" class="loading">Laen Eleringi andmeid...</div>
-
-    <div id="resultArea">
-        <div id="smartBadge" class="badge" style="display:none;">SOODSAIM VALIK!</div>
-        <div style="color:#94a3b8">Kogu sessiooni hind:</div>
-        <div class="cost-display" id="totalCost">0.00 €</div>
-        <div id="avgPriceInfo" style="font-size: 0.85rem; color: #cbd5e1;"></div>
-
-        <div id="coffeeSection" class="coffee-container hidden">
-            <span class="coffee-label">Äpp jättis su eelarvesse raha üle? ⚡</span>
-            <a href="https://www.buymeacoffee.com/lessgo" target="_blank" class="btn-coffee">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"></path><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path><line x1="6" y1="1" x2="6" y2="4"></line><line x1="10" y1="1" x2="10" y2="4"></line><line x1="14" y1="1" x2="14" y2="4"></line></svg>
-                Osta mulle saunaõlu :)
-            </a>
-        </div>
-    </div>
-
-    <details class="seo-details">
-        <summary>ℹ️ Kuidas me hinda arvutame?</summary>
-        <div class="seo-content">
-            <p style="margin-top:0;">SaunaMaster Pro kasutab Eleringi ametlikke Nord Pool elektri börsihindu. Äpp korrutab sinu kerise võimsuse, kütmise aja ja konkreetse tunni elektrihinna.</p>
-            <p style="margin-bottom:0;"><strong>Miks seda kasutada?</strong> Elektrihind võib päeva jooksul erineda kordades. Valides kütmiseks soodsaima tunni, võid säästa iga saunaskäiguga mitu eurot. See on tasuta tööriist igale saunasõbrale.</p>
-        </div>
-    </details>
-
-    <div class="footer-legal">
+    <button class="btn-calc" onclick="calculate()">🔥 Arvuta kulu</button>
+    <button class="btn-best" onclick="findBest()">🌱 Leia soodsaim aeg</button>
+    <div id="resultArea" style="margin-top:20px; text-align:center; font-weight:bold; color:var(--success-color); font-size:1.2rem;"></div>
+    <div class="footer">
         LessGo OÜ | Reg: 16914274<br>
         Langerma küla, Põhja-Pärnumaa vald<br>
         Kontakt: meelis@lessgo.ee<br>
-        <a href="#" style="opacity: 0.7;">Privaatsus ja tingimused</a>
+        <a href="#" style="color:var(--secondary-text)">Privaatsus ja tingimused</a>
     </div>
-
 </div>
-
 <script>
-    const VAT = 1.24; // Käibemaks 24%
     let electricityPrices = [];
     let currentMode = 'exchange';
-
     const fetchWithTimeout = async (resource, options = {}) => {
         const { timeout = 5000 } = options;
         const controller = new AbortController();
@@ -389,175 +86,89 @@ button:active { transform: scale(0.98); }
         clearTimeout(id);
         return response;
     };
-
     async function fetchPrices() {
         document.getElementById('loading').style.display = 'block';
-        const select = document.getElementById('startTimeSelect');
-        select.innerHTML = '<option>Laen andmeid...</option>';
-
-        const start = new Date();
-        start.setHours(0,0,0,0);
-        const end = new Date();
-        end.setDate(end.getDate() + 1); 
-        end.setHours(23,59,59,999);
-        
-        const eleringUrl = `https://dashboard.elering.ee/api/nps/price?start=${start.toISOString()}&end=${end.toISOString()}`;
-
-        // Meetod 1: Corsproxy.io
-        try {
-            const r1 = await fetchWithTimeout('https://corsproxy.io/?' + encodeURIComponent(eleringUrl));
-            if (!r1.ok) throw new Error('Viga');
-            const d1 = await r1.json();
-            if (d1.data && d1.data.ee) { success(d1.data.ee); return; }
-        } catch (e) { console.log("M1 viga"); }
-
-        // Meetod 2: Allorigins
-        try {
-            const r2 = await fetchWithTimeout(`https://api.allorigins.win/get?url=${encodeURIComponent(eleringUrl)}`);
-            if (!r2.ok) throw new Error('Viga');
-            const d2 = await r2.json();
-            const actualData = JSON.parse(d2.contents);
-            if (actualData.data && actualData.data.ee) { success(actualData.data.ee); return; }
-        } catch (e) { console.log("M2 viga"); }
-
-        document.getElementById('loading').style.display = 'none';
-        select.innerHTML = '<option>Viga andmete laadimisel :(</option>';
-    }
-
-    function success(data) {
-        electricityPrices = data;
-        populateTimeSelect();
+        const start = new Date().toISOString();
+        const end = new Date(new Date().getTime() + 86400000).toISOString();
+        const eleringUrl = `https://dashboard.elering.ee/api/nps/price?start=${start}&end=${end}`;
+        const proxies = [
+            `https://api.allorigins.win/get?url=${encodeURIComponent(eleringUrl)}`,
+            `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(eleringUrl)}`
+        ];
+        for (let url of proxies) {
+            try {
+                const res = await fetchWithTimeout(url);
+                const data = await res.json();
+                const actualData = data.contents ? JSON.parse(data.contents) : data;
+                if (actualData && actualData.data && actualData.data.ee) {
+                    electricityPrices = actualData.data.ee;
+                    populateTimeSelect();
+                    document.getElementById('loading').style.display = 'none';
+                    return;
+                }
+            } catch (e) { console.error("Proxy viga:", e); }
+        }
+        document.getElementById('startTimeSelect').innerHTML = '<option>Viga andmete laadimisel :(</option>';
         document.getElementById('loading').style.display = 'none';
     }
-
     function populateTimeSelect() {
         const select = document.getElementById('startTimeSelect');
         select.innerHTML = '';
         const now = new Date();
-        now.setMinutes(0, 0, 0);
-
-        let hasFuturePrices = false;
-        electricityPrices.forEach(pricePoint => {
-            const time = new Date(pricePoint.timestamp * 1000);
-            if (time < now && time.getHours() !== now.getHours()) return;
-            hasFuturePrices = true;
-
-            const pricePerKwh = (pricePoint.price / 10) * VAT;
-            const isToday = time.getDate() === now.getDate();
-            const dayStr = isToday ? "Täna" : "Homme";
-            const hourStr = time.getHours() + ":00";
-            
-            const option = document.createElement('option');
-            option.value = pricePoint.timestamp;
-            option.text = `${dayStr} ${hourStr} (${pricePerKwh.toFixed(1)} s/kWh)`;
-            select.appendChild(option);
+        electricityPrices.forEach(p => {
+            const time = new Date(p.timestamp * 1000);
+            if (time >= now) {
+                const opt = document.createElement('option');
+                opt.value = p.timestamp;
+                opt.text = `${time.getHours()}:00 (${(p.price/10).toFixed(1)} s/kWh)`;
+                select.appendChild(opt);
+            }
         });
     }
-
-    function setPackageType(type) {
-        currentMode = type;
-        document.getElementById('tabExchange').className = type === 'exchange' ? 'type-option active' : 'type-option';
-        document.getElementById('tabFixed').className = type === 'fixed' ? 'type-option active' : 'type-option';
-
-        if (type === 'exchange') {
-            document.getElementById('exchangeGroup').classList.remove('hidden');
-            document.getElementById('btnSmart').classList.remove('hidden');
-            document.getElementById('fixedGroup').classList.add('hidden');
-        } else {
-            document.getElementById('exchangeGroup').classList.add('hidden');
-            document.getElementById('btnSmart').classList.add('hidden');
-            document.getElementById('fixedGroup').classList.remove('hidden');
-        }
-        document.getElementById('resultArea').style.display = 'none';
+    function setMode(mode) {
+        currentMode = mode;
+        document.getElementById('tabExchange').className = mode === 'exchange' ? 'tab active' : 'tab';
+        document.getElementById('tabFixed').className = mode === 'fixed' ? 'tab active' : 'tab';
+        document.getElementById('startTimeGroup').style.display = mode === 'exchange' ? 'block' : 'none';
+        document.getElementById('fixedGroup').style.display = mode === 'fixed' ? 'block' : 'none';
     }
-
-    function calculateCost(isSmart = false) {
-        // ANALÜÜTIKA SÜNDMUS: Kulu arvutamine
-        gtag('event', 'calculate_cost', { 'mode': currentMode });
-
+    function calculate() {
+        const power = 9; // Sinu kerise võimsus
         const duration = parseFloat(document.getElementById('duration').value);
-        const fixedFees = parseFloat(document.getElementById('fixedFees').value);
-        const power = parseFloat(document.getElementById('heaterPower').value);
-        
-        let totalCost = 0;
-        let avgPriceDisp = 0;
-
-        if (currentMode === 'fixed') {
-            const userPrice = parseFloat(document.getElementById('userFixedPrice').value);
-            if (isNaN(userPrice)) { alert("Sisesta oma elektrihind!"); return; }
-            const fullPrice = userPrice + fixedFees;
-            totalCost = (fullPrice / 100) * power * duration;
-            avgPriceDisp = fullPrice;
-        } else {
-            const startTimestamp = parseInt(document.getElementById('startTimeSelect').value);
-            if (!startTimestamp) { alert("Oota hindu!"); return; }
-
-            const startIndex = electricityPrices.findIndex(p => p.timestamp === startTimestamp);
-            let totalPriceSum = 0;
-
-            for (let i = 0; i < Math.ceil(duration); i++) {
-                if (startIndex + i >= electricityPrices.length) break;
-                let p = electricityPrices[startIndex + i];
-                let fullPrice = ((p.price / 10) * VAT) + fixedFees;
-                
-                let hoursInSlot = 1;
-                if (i === Math.ceil(duration) - 1 && duration % 1 !== 0) {
-                    hoursInSlot = duration % 1;
+        let cost = 0;
+        if (currentMode === 'exchange') {
+            const startTime = parseInt(document.getElementById('startTimeSelect').value);
+            const startIndex = electricityPrices.findIndex(p => p.timestamp === startTime);
+            for (let i = 0; i < duration; i++) {
+                if (electricityPrices[startIndex + i]) {
+                    cost += (electricityPrices[startIndex + i].price / 1000) * power;
                 }
-                totalCost += (fullPrice / 100) * power * hoursInSlot;
-                totalPriceSum += fullPrice * hoursInSlot;
             }
-            avgPriceDisp = totalPriceSum / duration;
+        } else {
+            const fixedPrice = parseFloat(document.getElementById('fixedPrice').value) / 100;
+            cost = power * duration * fixedPrice;
         }
-
-        document.getElementById('resultArea').style.display = 'block';
-        document.getElementById('totalCost').innerText = totalCost.toFixed(2) + " €";
-        document.getElementById('avgPriceInfo').innerText = `Arvestuslik kWh hind kokku: ${avgPriceDisp.toFixed(1)} s/kWh`;
-        document.getElementById('smartBadge').style.display = isSmart ? 'inline-block' : 'none';
-        document.getElementById('coffeeSection').classList.remove('hidden');
+        document.getElementById('resultArea').innerText = `Kütmise kulu: ${cost.toFixed(2)} €`;
     }
-
-    function findCheapestAndSet() {
-        // ANALÜÜTIKA SÜNDMUS: Nutika aja otsing
-        gtag('event', 'find_cheapest_time');
-
-        if (currentMode !== 'exchange') return;
+    function findBest() {
+        if (electricityPrices.length === 0) return;
+        const power = 9;
         const duration = parseFloat(document.getElementById('duration').value);
-        const fixedFees = parseFloat(document.getElementById('fixedFees').value);
-        
-        let bestCost = Infinity;
-        let bestTimestamp = null;
-        const select = document.getElementById('startTimeSelect');
-        const options = Array.from(select.options);
-
-        options.forEach(option => {
-            let startTimestamp = parseInt(option.value);
-            if(!startTimestamp) return;
-            let startIndex = electricityPrices.findIndex(p => p.timestamp === startTimestamp);
-            let tempCost = 0;
-            let valid = true;
-
-            for (let i = 0; i < Math.ceil(duration); i++) {
-                if (startIndex + i >= electricityPrices.length) { valid = false; break; }
-                let p = electricityPrices[startIndex + i];
-                tempCost += ((p.price / 10) * VAT) + fixedFees;
+        let minCost = Infinity;
+        let bestTime = '';
+        for (let i = 0; i <= electricityPrices.length - duration; i++) {
+            let currentCost = 0;
+            for (let j = 0; j < duration; j++) {
+                currentCost += (electricityPrices[i + j].price / 1000) * power;
             }
-
-            if (valid && tempCost < bestCost) {
-                bestCost = tempCost;
-                bestTimestamp = startTimestamp;
+            if (currentCost < minCost) {
+                minCost = currentCost;
+                bestTime = new Date(electricityPrices[i].timestamp * 1000).getHours() + ':00';
             }
-        });
-
-        if (bestTimestamp) {
-            select.value = bestTimestamp;
-            calculateCost(true);
         }
+        document.getElementById('resultArea').innerText = `Soodsaim aeg alustamiseks: kell ${bestTime} (Kulu: ${minCost.toFixed(2)} €)`;
     }
-
     fetchPrices();
 </script>
-
 </body>
 </html>
-        .btn-
