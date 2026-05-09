@@ -3,8 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SaunaMaster Pro ⚡</title>
-    
     <title>SaunaMaster Pro - Leia soodsaim saunaaeg ⚡</title>
     <meta name="description" content="Tasuta sauna elektrihinna kalkulaator. Arvuta täpne sauna kütmise kulu vastavalt Nord Pool elektri börsihinnale ja leia soodsaim aeg saunatamiseks.">
     <meta name="keywords" content="saun, elektrihind, börsielekter, sauna kütmine, elektriarve, saunakalkulaator, nord pool, kokkuhoid, energiasääst">
@@ -347,7 +345,7 @@ padding-top: 20px;
 
 <div id="coffeeSection" class="coffee-container hidden">
 <span class="coffee-label">Äpp jättis su eelarvesse raha üle? ⚡</span>
-<a href="https://www.buymeacoffee.com/lessgo" target="_blank" class="btn-coffee">
+<a href="https://www.buymeacoffee.com/lessgo" target="_blank" rel="noopener noreferrer" class="btn-coffee">
 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"></path><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path><line x1="6" y1="1" x2="6" y2="4"></line><line x1="10" y1="1" x2="10" y2="4"></line><line x1="14" y1="1" x2="14" y2="4"></line></svg>
 Osta mulle saunaõlu :)
 </a>
@@ -373,75 +371,33 @@ Kontakt: meelis@lessgo.ee<br>
 
 <script>
 const VAT = 1.24; // Käibemaks 24%
+// Hinnad laetakse same-origin'i staatilisest failist, mida GitHub Action uuendab iga tund.
+const PRICES_URL = '/prices.json';
 let electricityPrices = [];
 let currentMode = 'exchange';
 
-// Aitab oodata (timeout), et fetch ei jääks igavesti rippuma
-const fetchWithTimeout = async (resource, options = {}) => {
-const { timeout = 5000 } = options;
-const controller = new AbortController();
-const id = setTimeout(() => controller.abort(), timeout);
-const response = await fetch(resource, { ...options, signal: controller.signal });
-clearTimeout(id);
-return response;
-};
-
-// See funktsioon proovib laadida hindu mitmest kohast (3 meetodit)
 async function fetchPrices() {
 document.getElementById('loading').style.display = 'block';
 const select = document.getElementById('startTimeSelect');
 select.innerHTML = '<option>Laen andmeid...</option>';
 
-const start = new Date();
-start.setHours(0,0,0,0);
-const end = new Date();
-end.setDate(end.getDate() + 1); 
-end.setHours(23,59,59,999);
+const controller = new AbortController();
+const timer = setTimeout(() => controller.abort(), 10000);
 
-// Eleringi originaalaadress
-const eleringUrl = `https://dashboard.elering.ee/api/nps/price?start=${start.toISOString()}&end=${end.toISOString()}`;
-
-// 1. KATSE: Corsproxy.io
 try {
-console.log("Proovin meetodit 1 (Corsproxy)...");
-const r1 = await fetchWithTimeout('https://corsproxy.io/?' + encodeURIComponent(eleringUrl));
-if (!r1.ok) throw new Error('Viga');
-const d1 = await r1.json();
-if (d1.data && d1.data.ee) {
-success(d1.data.ee);
-return;
-}
-} catch (e) { console.log("Meetod 1 ebaõnnestus."); }
-
-// 2. KATSE: Allorigins
-try {
-console.log("Proovin meetodit 2 (Allorigins)...");
-const r2 = await fetchWithTimeout(`https://api.allorigins.win/get?url=${encodeURIComponent(eleringUrl)}`);
-if (!r2.ok) throw new Error('Viga');
-const d2 = await r2.json();
-const actualData = JSON.parse(d2.contents);
-if (actualData.data && actualData.data.ee) {
-success(actualData.data.ee);
-return;
-}
-} catch (e) { console.log("Meetod 2 ebaõnnestus."); }
-
-// 3. KATSE: Codetabs (uus varuvariant)
-try {
-console.log("Proovin meetodit 3 (Codetabs)...");
-const r3 = await fetchWithTimeout(`https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(eleringUrl)}`);
-if (!r3.ok) throw new Error('Viga');
-const d3 = await r3.json();
-if (d3.data && d3.data.ee) {
-success(d3.data.ee);
-return;
-}
-} catch (e) { console.log("Meetod 3 ebaõnnestus."); }
-
-// KUI KÕIK EBAÕNNESTUS
+const r = await fetch(PRICES_URL + '?t=' + Date.now(), { signal: controller.signal });
+if (!r.ok) throw new Error('HTTP ' + r.status);
+const d = await r.json();
+if (!d.data || !d.data.ee) throw new Error('Vigane vastus');
+success(d.data.ee);
+} catch (e) {
+console.error('Hindade laadimine ebaõnnestus:', e);
 document.getElementById('loading').style.display = 'none';
 select.innerHTML = '<option>Viga andmete laadimisel :(</option>';
-alert("Kahjuks ei saanud Eleringist hindu kätte (kõik vahendajad on maas). Proovi hiljem uuesti või kasuta Fikseeritud paketti.");
+alert("Kahjuks ei saanud Eleringist hindu kätte. Proovi hiljem uuesti või kasuta Fikseeritud paketti.");
+} finally {
+clearTimeout(timer);
+}
 }
 
 // Abifunktsioon, kui andmed saadi kätte
