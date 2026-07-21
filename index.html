@@ -75,6 +75,34 @@ margin-top: 0;
 margin-bottom: 20px;
 }
 
+/* --- Keelevalik (lipud) --- */
+.lang-switch {
+display: flex;
+justify-content: flex-end;
+gap: 6px;
+margin-bottom: 10px;
+}
+
+.lang-btn {
+width: auto;
+padding: 4px 8px;
+font-size: 1.25rem;
+line-height: 1;
+background: transparent;
+border: 1px solid transparent;
+border-radius: 8px;
+opacity: 0.4;
+transition: opacity 0.2s, border-color 0.2s;
+}
+
+.lang-btn:hover { opacity: 0.75; }
+
+.lang-btn.active {
+opacity: 1;
+border-color: var(--accent-color);
+background: rgba(245, 158, 11, 0.12);
+}
+
 .input-group { margin-bottom: 1.5rem; }
 
 label {
@@ -279,92 +307,98 @@ padding-top: 20px;
 <body>
 
 <div class="container">
+
+<div class="lang-switch">
+<button type="button" class="lang-btn active" id="langEt" onclick="setLang('et')" title="Eesti keel" aria-label="Eesti keel">🇪🇪</button>
+<button type="button" class="lang-btn" id="langEn" onclick="setLang('en')" title="English" aria-label="English">🇺🇸</button>
+</div>
+
 <h1>SaunaMaster Pro ⚡</h1>
 
 <div class="type-selector">
-<div class="type-option active" onclick="setPackageType('exchange')" id="tabExchange">Börsipakett</div>
-<div class="type-option" onclick="setPackageType('fixed')" id="tabFixed">Fikseeritud</div>
+<div class="type-option active" onclick="setPackageType('exchange')" id="tabExchange" data-i18n="tabExchange">Börsipakett</div>
+<div class="type-option" onclick="setPackageType('fixed')" id="tabFixed" data-i18n="tabFixed">Fikseeritud</div>
 </div>
 
 <div class="input-group">
-<label>Kui kaua saunas möllad?</label>
+<label data-i18n="labelDuration">Kui kaua saunas möllad?</label>
 <div class="select-wrapper">
 <select id="duration">
-<option value="1">1 tund</option>
-<option value="1.5">1.5 tundi</option>
-<option value="2">2 tundi</option>
-<option value="2.5">2.5 tundi</option>
-<option value="3" selected>3 tundi</option>
-<option value="3.5">3.5 tundi</option>
-<option value="4">4 tundi</option>
-<option value="5">5 tundi</option>
+<option value="1" data-i18n="dur1">1 tund</option>
+<option value="1.5" data-i18n="dur15">1.5 tundi</option>
+<option value="2" data-i18n="dur2">2 tundi</option>
+<option value="2.5" data-i18n="dur25">2.5 tundi</option>
+<option value="3" selected data-i18n="dur3">3 tundi</option>
+<option value="3.5" data-i18n="dur35">3.5 tundi</option>
+<option value="4" data-i18n="dur4">4 tundi</option>
+<option value="5" data-i18n="dur5">5 tundi</option>
 </select>
 </div>
 </div>
 
 <div id="exchangeGroup" class="input-group">
-<label>Millal alustad kütmist?</label>
+<label data-i18n="labelStart">Millal alustad kütmist?</label>
 <div class="select-wrapper">
 <select id="startTimeSelect">
-<option>Laen kellaaegu...</option>
+<option data-i18n="loadingHours">Laen kellaaegu...</option>
 </select>
 </div>
 </div>
 
 <div id="fixedGroup" class="input-group hidden">
-<label>Sinu elektri hind (senti/kWh)</label>
-<input type="number" id="userFixedPrice" placeholder="Nt. 12.5" step="0.1">
+<label data-i18n="labelFixedPrice">Sinu elektri hind (senti/kWh)</label>
+<input type="number" id="userFixedPrice" placeholder="Nt. 12.5" data-i18n-placeholder="phFixedPrice" step="0.1">
 </div>
 
 <div class="btn-group">
-<button class="btn-calc" onclick="calculateCost()">🔥 Arvuta kulu</button>
-<button id="btnSmart" class="btn-smart" onclick="findCheapestAndSet()">🌱 Leia soodsaim aeg</button>
+<button class="btn-calc" onclick="calculateCost()" data-i18n="btnCalc">🔥 Arvuta kulu</button>
+<button id="btnSmart" class="btn-smart" onclick="findCheapestAndSet()" data-i18n="btnSmart">🌱 Leia soodsaim aeg</button>
 </div>
 
 <details>
-<summary>⚙️ Täpsemad seaded</summary>
+<summary data-i18n="advSettings">⚙️ Täpsemad seaded</summary>
 <div style="margin-top: 15px;">
 <div class="input-group">
-<label>Võrgutasu + marginaal (senti/kWh)</label>
+<label data-i18n="labelFees">Võrgutasu + marginaal (senti/kWh)</label>
 <input type="number" id="fixedFees" value="7.0" step="0.1">
 </div>
 <div class="input-group">
-<label>Kerise võimsus (kW)</label>
+<label data-i18n="labelPower">Kerise võimsus (kW)</label>
 <input type="number" id="heaterPower" value="6">
 </div>
 </div>
 </details>
 
-<div id="loading" class="loading">Laen Eleringi andmeid...</div>
+<div id="loading" class="loading" data-i18n="loadingData">Laen Eleringi andmeid...</div>
 
 <div id="resultArea">
-<div id="smartBadge" class="badge" style="display:none;">SOODSAIM VALIK!</div>
-<div style="color:#94a3b8">Kogu sessiooni hind:</div>
+<div id="smartBadge" class="badge" style="display:none;" data-i18n="badgeCheapest">SOODSAIM VALIK!</div>
+<div style="color:#94a3b8" data-i18n="totalLabel">Kogu sessiooni hind:</div>
 <div class="cost-display" id="totalCost">0.00 €</div>
 <div id="avgPriceInfo" style="font-size: 0.85rem; color: #cbd5e1;"></div>
 
 <div id="coffeeSection" class="coffee-container hidden">
-<span class="coffee-label">Äpp jättis su eelarvesse raha üle? ⚡</span>
+<span class="coffee-label" data-i18n="coffeeLabel">Äpp jättis su eelarvesse raha üle? ⚡</span>
 <a href="https://www.buymeacoffee.com/lessgo" target="_blank" rel="noopener noreferrer" class="btn-coffee">
 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"></path><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path><line x1="6" y1="1" x2="6" y2="4"></line><line x1="10" y1="1" x2="10" y2="4"></line><line x1="14" y1="1" x2="14" y2="4"></line></svg>
-Osta mulle saunaõlu :)
+<span data-i18n="coffeeBtn">Osta mulle saunaõlu :)</span>
 </a>
 </div>
 </div>
 
     <details class="seo-details">
-        <summary>ℹ️ Kuidas me hinda arvutame?</summary>
+        <summary data-i18n="seoSummary">ℹ️ Kuidas me hinda arvutame?</summary>
         <div class="seo-content">
-            <p style="margin-top:0;">SaunaMaster Pro kasutab Eleringi ametlikke Nord Pool elektri börsihindu. Äpp korrutab sinu kerise võimsuse, kütmise aja ja konkreetse tunni elektrihinna.</p>
-            <p style="margin-bottom:0;"><strong>Miks seda kasutada?</strong> Elektrihind võib päeva jooksul erineda kordades. Valides kütmiseks soodsaima tunni, võid säästa iga saunaskäiguga mitu eurot. See on tasuta tööriist igale saunasõbrale.</p>
+            <p style="margin-top:0;" data-i18n="seoP1">SaunaMaster Pro kasutab Eleringi ametlikke Nord Pool elektri börsihindu. Äpp korrutab sinu kerise võimsuse, kütmise aja ja konkreetse tunni elektrihinna.</p>
+            <p style="margin-bottom:0;" data-i18n-html="seoP2"><strong>Miks seda kasutada?</strong> Elektrihind võib päeva jooksul erineda kordades. Valides kütmiseks soodsaima tunni, võid säästa iga saunaskäiguga mitu eurot. See on tasuta tööriist igale saunasõbrale.</p>
         </div>
     </details>
 
 <div class="footer-legal">
 LessGo OÜ | Reg: 16914274<br>
 Langerma küla, Põhja-Pärnumaa vald<br>
-Kontakt: meelis@lessgo.ee<br>
-<a href="#" style="opacity: 0.7;">Privaatsus ja tingimused</a>
+<span data-i18n="footerContact">Kontakt: meelis@lessgo.ee</span><br>
+<a href="#" style="opacity: 0.7;" data-i18n="footerPrivacy">Privaatsus ja tingimused</a>
 </div>
 
 </div>
@@ -376,10 +410,147 @@ const PRICES_URL = '/prices.json';
 let electricityPrices = [];
 let currentMode = 'exchange';
 
+/* ---------------- Keeled ---------------- */
+
+const I18N = {
+et: {
+docTitle: "SaunaMaster Pro - Leia soodsaim saunaaeg ⚡",
+docDesc: "Tasuta sauna elektrihinna kalkulaator. Arvuta täpne sauna kütmise kulu vastavalt Nord Pool elektri börsihinnale ja leia soodsaim aeg saunatamiseks.",
+tabExchange: "Börsipakett",
+tabFixed: "Fikseeritud",
+labelDuration: "Kui kaua saunas möllad?",
+dur1: "1 tund", dur15: "1.5 tundi", dur2: "2 tundi", dur25: "2.5 tundi",
+dur3: "3 tundi", dur35: "3.5 tundi", dur4: "4 tundi", dur5: "5 tundi",
+labelStart: "Millal alustad kütmist?",
+loadingHours: "Laen kellaaegu...",
+labelFixedPrice: "Sinu elektri hind (senti/kWh)",
+phFixedPrice: "Nt. 12.5",
+btnCalc: "🔥 Arvuta kulu",
+btnSmart: "🌱 Leia soodsaim aeg",
+advSettings: "⚙️ Täpsemad seaded",
+labelFees: "Võrgutasu + marginaal (senti/kWh)",
+labelPower: "Kerise võimsus (kW)",
+loadingData: "Laen Eleringi andmeid...",
+badgeCheapest: "SOODSAIM VALIK!",
+totalLabel: "Kogu sessiooni hind:",
+coffeeLabel: "Äpp jättis su eelarvesse raha üle? ⚡",
+coffeeBtn: "Osta mulle saunaõlu :)",
+seoSummary: "ℹ️ Kuidas me hinda arvutame?",
+seoP1: "SaunaMaster Pro kasutab Eleringi ametlikke Nord Pool elektri börsihindu. Äpp korrutab sinu kerise võimsuse, kütmise aja ja konkreetse tunni elektrihinna.",
+seoP2: "<strong>Miks seda kasutada?</strong> Elektrihind võib päeva jooksul erineda kordades. Valides kütmiseks soodsaima tunni, võid säästa iga saunaskäiguga mitu eurot. See on tasuta tööriist igale saunasõbrale.",
+footerContact: "Kontakt: meelis@lessgo.ee",
+footerPrivacy: "Privaatsus ja tingimused",
+// dünaamiline
+loadingShort: "Laen andmeid...",
+loadError: "Viga andmete laadimisel :(",
+noPrices: "Hinnad tulevad varsti...",
+today: "Täna",
+tomorrow: "Homme",
+unitShort: "s/kWh",
+avgPrice: (p) => `Arvestuslik kWh hind kokku: ${p} s/kWh`,
+alertFetch: "Kahjuks ei saanud Eleringist hindu kätte. Proovi hiljem uuesti või kasuta Fikseeritud paketti.",
+alertNoPrice: "Sisesta oma elektrihind!",
+alertWaitPrices: "Oota hindu või vali Fikseeritud pakett!",
+alertNotLoaded: "Hinnad pole laetud, ei saa arvutada.",
+alertNoSlot: "Ei leidnud sobivat aega."
+},
+en: {
+docTitle: "SaunaMaster Pro - Find the cheapest sauna hour ⚡",
+docDesc: "Free sauna electricity cost calculator. Work out what heating your sauna really costs at Nord Pool spot prices and find the cheapest hour to fire it up.",
+tabExchange: "Spot price",
+tabFixed: "Fixed price",
+labelDuration: "How long is your sauna session?",
+dur1: "1 hour", dur15: "1.5 hours", dur2: "2 hours", dur25: "2.5 hours",
+dur3: "3 hours", dur35: "3.5 hours", dur4: "4 hours", dur5: "5 hours",
+labelStart: "When do you start heating?",
+loadingHours: "Loading hours...",
+labelFixedPrice: "Your electricity price (cents/kWh)",
+phFixedPrice: "e.g. 12.5",
+btnCalc: "🔥 Calculate cost",
+btnSmart: "🌱 Find the cheapest hour",
+advSettings: "⚙️ Advanced settings",
+labelFees: "Grid fee + margin (cents/kWh)",
+labelPower: "Heater power (kW)",
+loadingData: "Loading Elering data...",
+badgeCheapest: "CHEAPEST OPTION!",
+totalLabel: "Total cost of the session:",
+coffeeLabel: "Did this app leave money in your wallet? ⚡",
+coffeeBtn: "Buy me a sauna beer :)",
+seoSummary: "ℹ️ How do we calculate the price?",
+seoP1: "SaunaMaster Pro uses the official Nord Pool spot prices published by Elering. The app multiplies your heater's power, the heating time and the electricity price of each specific hour.",
+seoP2: "<strong>Why use it?</strong> The price of electricity can differ several times over during a single day. By picking the cheapest hour to heat, you can save a few euros on every sauna session. It is a free tool for every sauna lover.",
+footerContact: "Contact: meelis@lessgo.ee",
+footerPrivacy: "Privacy and terms",
+// dynamic
+loadingShort: "Loading data...",
+loadError: "Error loading data :(",
+noPrices: "Prices coming soon...",
+today: "Today",
+tomorrow: "Tomorrow",
+unitShort: "c/kWh",
+avgPrice: (p) => `Effective kWh price incl. fees: ${p} c/kWh`,
+alertFetch: "Sorry, we could not get the prices from Elering. Try again later or switch to the Fixed price mode.",
+alertNoPrice: "Enter your electricity price!",
+alertWaitPrices: "Wait for the prices to load or switch to Fixed price!",
+alertNotLoaded: "Prices are not loaded, cannot calculate.",
+alertNoSlot: "Could not find a suitable time."
+}
+};
+
+let currentLang = 'et';
+const t = (key) => (I18N[currentLang] || I18N.et)[key];
+
+function detectLang() {
+const fromUrl = new URLSearchParams(location.search).get('lang');
+if (fromUrl && I18N[fromUrl]) return fromUrl;
+const saved = localStorage.getItem('saunaLang');
+if (saved && I18N[saved]) return saved;
+return 'et'; // vaikimisi eesti keel
+}
+
+function setLang(lang, skipUrl) {
+if (!I18N[lang]) lang = 'et';
+currentLang = lang;
+localStorage.setItem('saunaLang', lang);
+
+document.documentElement.lang = lang;
+document.title = t('docTitle');
+const metaDesc = document.querySelector('meta[name="description"]');
+if (metaDesc) metaDesc.setAttribute('content', t('docDesc'));
+
+document.querySelectorAll('[data-i18n]').forEach(el => {
+const val = t(el.getAttribute('data-i18n'));
+if (typeof val === 'string') el.textContent = val;
+});
+document.querySelectorAll('[data-i18n-html]').forEach(el => {
+const val = t(el.getAttribute('data-i18n-html'));
+if (typeof val === 'string') el.innerHTML = val;
+});
+document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+const val = t(el.getAttribute('data-i18n-placeholder'));
+if (typeof val === 'string') el.setAttribute('placeholder', val);
+});
+
+document.getElementById('langEt').classList.toggle('active', lang === 'et');
+document.getElementById('langEn').classList.toggle('active', lang === 'en');
+
+// Kellaajad ja tulemus on dünaamilised — joonista uuesti
+if (electricityPrices.length) populateTimeSelect();
+const avgEl = document.getElementById('avgPriceInfo');
+if (avgEl && avgEl.dataset.price) avgEl.innerText = t('avgPrice')(avgEl.dataset.price);
+
+if (!skipUrl) {
+const url = new URL(location.href);
+if (lang === 'et') url.searchParams.delete('lang');
+else url.searchParams.set('lang', lang);
+history.replaceState(null, '', url);
+}
+}
+
 async function fetchPrices() {
 document.getElementById('loading').style.display = 'block';
 const select = document.getElementById('startTimeSelect');
-select.innerHTML = '<option>Laen andmeid...</option>';
+select.innerHTML = '<option>' + t('loadingShort') + '</option>';
 
 const controller = new AbortController();
 const timer = setTimeout(() => controller.abort(), 10000);
@@ -393,8 +564,8 @@ success(d.data.ee);
 } catch (e) {
 console.error('Hindade laadimine ebaõnnestus:', e);
 document.getElementById('loading').style.display = 'none';
-select.innerHTML = '<option>Viga andmete laadimisel :(</option>';
-alert("Kahjuks ei saanud Eleringist hindu kätte. Proovi hiljem uuesti või kasuta Fikseeritud paketti.");
+select.innerHTML = '<option>' + t('loadError') + '</option>';
+alert(t('alertFetch'));
 } finally {
 clearTimeout(timer);
 }
@@ -410,6 +581,7 @@ console.log("Hinnad edukalt laetud!");
 
 function populateTimeSelect() {
 const select = document.getElementById('startTimeSelect');
+const previous = select.value; // hoia valik keelevahetusel alles
 select.innerHTML = '';
 
 const now = new Date();
@@ -424,14 +596,14 @@ hasFuturePrices = true;
 
 const pricePerKwh = (pricePoint.price / 10) * VAT;
 const isToday = time.getDate() === now.getDate();
-const dayStr = isToday ? "Täna" : "Homme";
+const dayStr = isToday ? t('today') : t('tomorrow');
 const hourStr = time.getHours() + ":00";
 
 const option = document.createElement('option');
 option.value = pricePoint.timestamp;
 
 // Visuaalne lisa: näita hinda rippmenüüs
-option.text = `${dayStr} ${hourStr} (${pricePerKwh.toFixed(1)} s/kWh)`;
+option.text = `${dayStr} ${hourStr} (${pricePerKwh.toFixed(1)} ${t('unitShort')})`;
 
 if (pricePerKwh < 10) option.style.color = "#4ade80"; 
 else if (pricePerKwh > 30) option.style.color = "#f87171"; 
@@ -440,7 +612,9 @@ select.appendChild(option);
 });
 
 if (!hasFuturePrices) {
-select.innerHTML = '<option>Hinnad tulevad varsti...</option>';
+select.innerHTML = '<option>' + t('noPrices') + '</option>';
+} else if (previous && electricityPrices.some(p => String(p.timestamp) === previous)) {
+select.value = previous; // taasta valik ainult siis, kui see on päris ajatempel
 }
 }
 
@@ -476,14 +650,14 @@ let avgPriceDisp = 0;
 
 if (currentMode === 'fixed') {
 const userPrice = parseFloat(document.getElementById('userFixedPrice').value);
-if (isNaN(userPrice)) { alert("Sisesta oma elektrihind!"); return; }
+if (isNaN(userPrice)) { alert(t('alertNoPrice')); return; }
 const fullPrice = userPrice + fixedFees;
 totalCost = (fullPrice / 100) * power * duration;
 avgPriceDisp = fullPrice;
 document.getElementById('smartBadge').style.display = 'none';
 } else {
 const startTimestamp = parseInt(document.getElementById('startTimeSelect').value);
-if (!startTimestamp) { alert("Oota hindu või vali Fikseeritud pakett!"); return; }
+if (!startTimestamp) { alert(t('alertWaitPrices')); return; }
 
 const startIndex = electricityPrices.findIndex(p => p.timestamp === startTimestamp);
 let totalPriceSum = 0;
@@ -507,8 +681,9 @@ document.getElementById('smartBadge').style.display = isSmart ? 'inline-block' :
 const resultArea = document.getElementById('resultArea');
 resultArea.style.display = 'block';
 document.getElementById('totalCost').innerText = totalCost.toFixed(2) + " €";
-document.getElementById('avgPriceInfo').innerText = 
-`Arvestuslik kWh hind kokku: ${avgPriceDisp.toFixed(1)} s/kWh`;
+const avgEl = document.getElementById('avgPriceInfo');
+avgEl.dataset.price = avgPriceDisp.toFixed(1);
+avgEl.innerText = t('avgPrice')(avgEl.dataset.price);
 
 // Näita kohvinuppu
 const coffeeSection = document.getElementById('coffeeSection');
@@ -526,7 +701,7 @@ const select = document.getElementById('startTimeSelect');
 const options = Array.from(select.options);
 
 if (options.length === 0 || isNaN(parseInt(options[0].value))) {
-alert("Hinnad pole laetud, ei saa arvutada.");
+alert(t('alertNotLoaded'));
 return;
 }
 
@@ -561,11 +736,12 @@ if (bestTimestamp) {
 select.value = bestTimestamp;
 calculateCost(true);
 } else {
-alert("Ei leidnud sobivat aega.");
+alert(t('alertNoSlot'));
 }
 }
 
 // Käivita kohe
+setLang(detectLang(), true);
 fetchPrices();
 </script>
 
