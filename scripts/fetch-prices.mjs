@@ -9,9 +9,32 @@ const end   = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.get
 
 const url = `https://dashboard.elering.ee/api/nps/price?start=${encodeURIComponent(start.toISOString())}&end=${encodeURIComponent(end.toISOString())}`;
 
-const r = await fetch(url, { signal: AbortSignal.timeout(15000) });
-if (!r.ok) throw new Error(`Elering HTTP ${r.status}`);
-const body = await r.json();
+// Elering vastab aeg-ajalt aeglasemalt kui 15 s ja üks katse kukutas terve jooksu:
+// 11., 17., 18. ja 20. juulil 2026 lõppes voog TimeoutError-iga. Tunnine cron parandas
+// olukorra järgmisel tunnil ise, aga vahepealne tund jäi värskendamata.
+async function fetchElering(url, tries = 3) {
+  let last, used = 0;
+  for (let i = 1; i <= tries; i++) {
+    used = i;
+    try {
+      const r = await fetch(url, { signal: AbortSignal.timeout(15000) });
+      // 4xx on meiepoolne viga — kordamine ei paranda seda, kukume kohe.
+      if (r.status >= 400 && r.status < 500) throw new Error(`Elering HTTP ${r.status} (ei korda)`);
+      if (!r.ok) throw new Error(`Elering HTTP ${r.status}`);
+      return await r.json();
+    } catch (e) {
+      last = e;
+      if (e.message?.includes('ei korda') || i === tries) break;
+      const wait = i * 5000;
+      console.warn(`Katse ${i}/${tries} kukkus (${e.message}) — uuesti ${wait / 1000} s pärast`);
+      await new Promise((res) => setTimeout(res, wait));
+    }
+  }
+  // `used`, mitte `tries` — vastasel juhul väidaks 4xx-i sõnum kolme katset, kuigi tehti üks.
+  throw new Error(`Elering ei vastanud (${used} ${used === 1 ? 'katse' : 'katset'}): ${last?.message}`);
+}
+
+const body = await fetchElering(url);
 const raw = body?.data?.ee ?? [];
 if (!Array.isArray(raw) || raw.length === 0) throw new Error('Elering tagastas tühja vastuse');
 
