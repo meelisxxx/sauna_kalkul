@@ -1,13 +1,22 @@
 // Tõmbab Eleringist päeva ja järgmise päeva NPS hinnad ning agreegeerib tunniks.
 // Väljund: prices.json formaadis { "fetched_at": "...", "data": { "ee": [{timestamp, price}, ...] } }
+//
+// `fetched_at` = millal SEE hinnakomplekt tõmmati, mitte millal skript viimati jooksis.
+// Faili kirjutame ainult siis, kui hinnad päriselt muutusid — muidu tekitaks iga
+// tunnijooks sisutühja commit'i (~24 päevas), sest ainus muutus oleks ajatempel.
 
 import { readFile, writeFile } from 'node:fs/promises';
 
 const OUT = 'prices.json';
 
-// Kui palju tohib vana prices.json olla vana, enne kui Eleringi tõrge on päris rike.
-// 3 h = kaks vahelejäänud tunnijooksu on veel vaikne, kolmas juba häirib.
-const STALE_LIMIT_MS = 3 * 60 * 60 * 1000;
+// Mitu tulevast tundi peab vana prices.json veel katma, et Eleringi tõrge oleks
+// talutav. Vanust ei saa mõõta `fetched_at`-i järgi — see seisab paigal seni, kuni
+// hinnad ei muutu. Kaetus on niikuinii õigem mõõt: see on täpselt see, mis saidil loeb.
+//
+// 6 h on valitud nii, et normaalne päev sellest alla ei kukuks: Elering avaldab homse
+// ~13:00 UTC ja enne seda katab fail päeva lõpuni (20:00 UTC), st miinimum on 13:00 UTC
+// paiku ~8 h. Jääb kaks tunnijooksu varu enne häiret.
+const MIN_FUTURE_HOURS = 6;
 
 const now = new Date();
 const start = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0, 0));
@@ -74,23 +83,21 @@ async function keepExistingOrThrow(err) {
   }
 
   const ee = prev?.data?.ee ?? [];
-  const fetchedAt = Date.parse(prev?.fetched_at ?? '');
-  const ageMs = Number.isFinite(fetchedAt) ? Date.now() - fetchedAt : Infinity;
-  const lastTs = ee.at(-1)?.timestamp ?? -Infinity;
   const thisHour = Math.floor(Date.now() / 1000 / 3600) * 3600;
+  const future = ee.filter((p) => p.timestamp >= thisHour);
 
-  // Sait filtreerib möödunud tunnid rippmenüüst välja. Kui viimane hind jääb
-  // käesolevast tunnist varasemaks, näeb kasutaja "hindu pole" — see on päris rike.
-  if (lastTs < thisHour) {
-    throw new Error(`${err.message} — ja vana ${OUT} ei kata enam ühtegi tulevast tundi`);
-  }
-  if (ageMs > STALE_LIMIT_MS) {
-    throw new Error(`${err.message} — ja vana ${OUT} on ${(ageMs / 3600000).toFixed(1)} h vana`);
+  // Sait filtreerib möödunud tunnid rippmenüüst välja, seega loeb ainult see,
+  // mitu tulevast tundi failis veel alles on.
+  if (future.length < MIN_FUTURE_HOURS) {
+    throw new Error(
+      `${err.message} — ja vana ${OUT} katab veel ainult ${future.length} tulevast tundi ` +
+      `(vaja vähemalt ${MIN_FUTURE_HOURS})`
+    );
   }
 
   console.warn(
     `HOIATUS: ${err.message}. Jätan vana ${OUT}-i alles ` +
-    `(vanus ${Math.round(ageMs / 60000)} min, katab kuni ${new Date(lastTs * 1000).toISOString()}). ` +
+    `(katab veel ${future.length} tundi, kuni ${new Date(ee.at(-1).timestamp * 1000).toISOString()}). ` +
     `Järgmine tunnijooks proovib uuesti.`
   );
   process.exit(0);
@@ -106,10 +113,25 @@ try {
   await keepExistingOrThrow(e); // ei naase: kas viskab vea või lõpetab edukalt
 }
 
-const output = {
-  fetched_at: new Date().toISOString(),
-  data: { ee }
-};
+const range = `${new Date(ee[0].timestamp*1000).toISOString()} → ${new Date(ee.at(-1).timestamp*1000).toISOString()}`;
 
-await writeFile(OUT, JSON.stringify(output, null, 0) + '\n');
-console.log(`Wrote ${OUT}: ${ee.length} hourly prices, range ${new Date(ee[0].timestamp*1000).toISOString()} → ${new Date(ee.at(-1).timestamp*1000).toISOString()}`);
+// Kirjuta ainult siis, kui hinnad ise muutusid. Muidu jääks faili ainsaks muutuseks
+// uus `fetched_at` ja workflow commitiks selle iga tund, ilma et miski oleks uuenenud.
+let unchanged = false;
+try {
+  const prev = JSON.parse(await readFile(OUT, 'utf8'));
+  unchanged = JSON.stringify(prev?.data?.ee) === JSON.stringify(ee);
+} catch {
+  unchanged = false; // faili pole või on katki — kirjutame üle
+}
+
+if (unchanged) {
+  console.log(`${OUT} on juba ajakohane: ${ee.length} hourly prices, range ${range} — ei kirjuta`);
+} else {
+  const output = {
+    fetched_at: new Date().toISOString(),
+    data: { ee }
+  };
+  await writeFile(OUT, JSON.stringify(output, null, 0) + '\n');
+  console.log(`Wrote ${OUT}: ${ee.length} hourly prices, range ${range}`);
+}
