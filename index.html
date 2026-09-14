@@ -75,7 +75,6 @@ margin-top: 0;
 margin-bottom: 20px;
 }
 
-/* --- Keelevalik (lipud) --- */
 .lang-switch {
 display: flex;
 justify-content: flex-end;
@@ -238,7 +237,6 @@ display: inline-block;
 margin-bottom: 10px;
 }
 
-/* --- Kohvinupu stiilid --- */
 .coffee-container {
 margin-top: 25px;
 text-align: center;
@@ -275,7 +273,6 @@ transform: translateY(-3px);
 box-shadow: 0 6px 20px rgba(255, 221, 0, 0.4);
 }
 
-/* --- Jalus --- */
 .footer-legal {
 margin-top: 40px;
 font-size: 0.75rem;
@@ -287,7 +284,6 @@ padding-top: 20px;
 }
 .footer-legal a { color: #64748b; text-decoration: underline; }
 
-        /* SEO tekstiosa stiil */
         .seo-details {
             margin-top: 30px; 
             text-align: left; 
@@ -404,13 +400,10 @@ Langerma küla, Põhja-Pärnumaa vald<br>
 </div>
 
 <script>
-const VAT = 1.24; // Käibemaks 24%
-// Hinnad laetakse same-origin'i staatilisest failist, mida GitHub Action uuendab iga tund.
+const VAT = 1.24;
 const PRICES_URL = '/prices.json';
 let electricityPrices = [];
 let currentMode = 'exchange';
-
-/* ---------------- Keeled ---------------- */
 
 const I18N = {
 et: {
@@ -440,7 +433,6 @@ seoP1: "SaunaMaster Pro kasutab Eleringi ametlikke Nord Pool elektri börsihindu
 seoP2: "<strong>Miks seda kasutada?</strong> Elektrihind võib päeva jooksul erineda kordades. Valides kütmiseks soodsaima tunni, võid säästa iga saunaskäiguga mitu eurot. See on tasuta tööriist igale saunasõbrale.",
 footerContact: "Kontakt: meelis@lessgo.ee",
 footerPrivacy: "Privaatsus ja tingimused",
-// dünaamiline
 loadingShort: "Laen andmeid...",
 loadError: "Viga andmete laadimisel :(",
 noPrices: "Hinnad tulevad varsti...",
@@ -481,7 +473,6 @@ seoP1: "SaunaMaster Pro uses the official Nord Pool spot prices published by Ele
 seoP2: "<strong>Why use it?</strong> The price of electricity can differ several times over during a single day. By picking the cheapest hour to heat, you can save a few euros on every sauna session. It is a free tool for every sauna lover.",
 footerContact: "Contact: meelis@lessgo.ee",
 footerPrivacy: "Privacy and terms",
-// dynamic
 loadingShort: "Loading data...",
 loadError: "Error loading data :(",
 noPrices: "Prices coming soon...",
@@ -505,7 +496,7 @@ const fromUrl = new URLSearchParams(location.search).get('lang');
 if (fromUrl && I18N[fromUrl]) return fromUrl;
 const saved = localStorage.getItem('saunaLang');
 if (saved && I18N[saved]) return saved;
-return 'et'; // vaikimisi eesti keel
+return 'et';
 }
 
 function setLang(lang, skipUrl) {
@@ -534,7 +525,6 @@ if (typeof val === 'string') el.setAttribute('placeholder', val);
 document.getElementById('langEt').classList.toggle('active', lang === 'et');
 document.getElementById('langEn').classList.toggle('active', lang === 'en');
 
-// Kellaajad ja tulemus on dünaamilised — joonista uuesti
 if (electricityPrices.length) populateTimeSelect();
 const avgEl = document.getElementById('avgPriceInfo');
 if (avgEl && avgEl.dataset.price) avgEl.innerText = t('avgPrice')(avgEl.dataset.price);
@@ -571,7 +561,6 @@ clearTimeout(timer);
 }
 }
 
-// Abifunktsioon, kui andmed saadi kätte
 function success(data) {
 electricityPrices = data;
 populateTimeSelect();
@@ -581,7 +570,7 @@ console.log("Hinnad edukalt laetud!");
 
 function populateTimeSelect() {
 const select = document.getElementById('startTimeSelect');
-const previous = select.value; // hoia valik keelevahetusel alles
+const previous = select.value;
 select.innerHTML = '';
 
 const now = new Date();
@@ -602,7 +591,6 @@ const hourStr = time.getHours() + ":00";
 const option = document.createElement('option');
 option.value = pricePoint.timestamp;
 
-// Visuaalne lisa: näita hinda rippmenüüs
 option.text = `${dayStr} ${hourStr} (${pricePerKwh.toFixed(1)} ${t('unitShort')})`;
 
 if (pricePerKwh < 10) option.style.color = "#4ade80"; 
@@ -614,11 +602,9 @@ select.appendChild(option);
 if (!hasFuturePrices) {
 select.innerHTML = '<option>' + t('noPrices') + '</option>';
 } else if (previous && electricityPrices.some(p => String(p.timestamp) === previous)) {
-select.value = previous; // taasta valik ainult siis, kui see on päris ajatempel
+select.value = previous;
 }
 }
-
-// --- Ülejäänud nupufunktsioonid ---
 
 function setPackageType(type) {
 currentMode = type;
@@ -685,7 +671,6 @@ const avgEl = document.getElementById('avgPriceInfo');
 avgEl.dataset.price = avgPriceDisp.toFixed(1);
 avgEl.innerText = t('avgPrice')(avgEl.dataset.price);
 
-// Näita kohvinuppu
 const coffeeSection = document.getElementById('coffeeSection');
 if(coffeeSection) coffeeSection.classList.remove('hidden');
 }
@@ -740,7 +725,6 @@ alert(t('alertNoSlot'));
 }
 }
 
-// Käivita kohe
 setLang(detectLang(), true);
 fetchPrices();
 </script>
