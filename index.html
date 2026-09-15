@@ -381,11 +381,11 @@ padding-top: 20px;
 <div class="select-wrapper">
 <select id="duration">
 <option value="1" data-i18n="dur1">1 tund</option>
-<option value="1.5" data-i18n="dur15">1.5 tundi</option>
+<option value="1.5" data-i18n="dur15">1,5 tundi</option>
 <option value="2" data-i18n="dur2">2 tundi</option>
-<option value="2.5" data-i18n="dur25">2.5 tundi</option>
+<option value="2.5" data-i18n="dur25">2,5 tundi</option>
 <option value="3" selected data-i18n="dur3">3 tundi</option>
-<option value="3.5" data-i18n="dur35">3.5 tundi</option>
+<option value="3.5" data-i18n="dur35">3,5 tundi</option>
 <option value="4" data-i18n="dur4">4 tundi</option>
 <option value="5" data-i18n="dur5">5 tundi</option>
 </select>
@@ -403,7 +403,7 @@ padding-top: 20px;
 
 <div id="fixedGroup" class="input-group hidden">
 <label data-i18n="labelFixedPrice">Sinu elektri hind (senti/kWh, km-ga)</label>
-<input type="number" id="userFixedPrice" placeholder="Nt. 12.5" data-i18n-placeholder="phFixedPrice" step="0.1">
+<input type="number" id="userFixedPrice" placeholder="12,5" data-i18n-placeholder="phFixedPrice" step="0.1">
 </div>
 
 <div class="btn-group">
@@ -458,14 +458,25 @@ padding-top: 20px;
 <div class="footer-legal">
 LessGo OÜ | Reg: 16914274<br>
 Langerma küla, Põhja-Pärnumaa vald<br>
-<span data-i18n="footerContact">Kontakt: meelis@lessgo.ee</span><br>
-<a href="#" style="opacity: 0.7;" data-i18n="footerPrivacy">Privaatsus ja tingimused</a>
+<span data-i18n="footerContact">Kontakt: meelis@lessgo.ee</span>
 </div>
 
 </div>
 
 <script>
 const VAT = 1.24;
+
+// Kuvamisel kasutab eesti keel koma, inglise keel punkti.
+// NB: <input type=number> väärtused ja <option value> JÄÄVAD punktiga — neid see ei puuduta.
+function fmtNum(n, digits) {
+const s = Number(n).toFixed(digits);
+return currentLang === 'et' ? s.replace('.', ',') : s;
+}
+
+// Kasutaja võib sisestada koma; osa brausereid annab selle meile edasi.
+function readNum(id) {
+return parseFloat(String(document.getElementById(id).value).replace(',', '.'));
+}
 const PRICES_URL = '/prices.json';
 let electricityPrices = [];
 let currentMode = 'exchange';
@@ -478,12 +489,12 @@ tabExchange: "Börsipakett",
 tabFixed: "Fikseeritud",
 labelDuration: "Kui kaua kerist kütad?",
 hintDuration: "Arvesta sisse ka sauna eelsoojendamise aeg.",
-dur1: "1 tund", dur15: "1.5 tundi", dur2: "2 tundi", dur25: "2.5 tundi",
-dur3: "3 tundi", dur35: "3.5 tundi", dur4: "4 tundi", dur5: "5 tundi",
+dur1: "1 tund", dur15: "1,5 tundi", dur2: "2 tundi", dur25: "2,5 tundi",
+dur3: "3 tundi", dur35: "3,5 tundi", dur4: "4 tundi", dur5: "5 tundi",
 labelStart: "Millal alustad kütmist?",
 loadingHours: "Laen kellaaegu...",
 labelFixedPrice: "Sinu elektri hind (senti/kWh, km-ga)",
-phFixedPrice: "Nt. 12.5",
+phFixedPrice: "12,5",
 btnCalc: "🔥 Arvuta kulu",
 btnSmart: "🌱 Leia soodsaim aeg",
 advSettings: "⚙️ Täpsemad seaded",
@@ -512,7 +523,6 @@ cB4: "<ul><li><strong>Võrgutasu ja marginaal.</strong> Börsihinnale lisandub v
 cH5: "Kuidas kalkulaator arvutab?",
 cB5: "<p>Kalkulaator kasutab <strong>Eleringi</strong> avaldatud Nord Pooli tunnihindu Eesti hinnapiirkonnas ning korrutab kerise võimsuse, kütmise kestuse ja valitud tundide hinnad.</p><p><strong>Käibemaks:</strong> börsihinnale lisab kalkulaator käibemaksu ise. Võrgutasu, marginaali ja fikseeritud hinna sisesta <strong>koos käibemaksuga</strong> — neile kalkulaator maksu juurde ei arvuta.</p><p>Nupp „Leia soodsaim aeg” käib läbi kõik saadaolevad tunnid ja näitab, milline stardiaeg annab kogu sessiooni kohta madalaima koguhinna.</p><p>Tööriist on tasuta ja kontot ei nõua.</p>",
 footerContact: "Kontakt: meelis@lessgo.ee",
-footerPrivacy: "Privaatsus ja tingimused",
 loadingShort: "Laen andmeid...",
 loadError: "Viga andmete laadimisel :(",
 noPrices: "Hinnad tulevad varsti...",
@@ -538,7 +548,7 @@ dur3: "3 hours", dur35: "3.5 hours", dur4: "4 hours", dur5: "5 hours",
 labelStart: "When do you start heating?",
 loadingHours: "Loading hours...",
 labelFixedPrice: "Your electricity price (cents/kWh, incl. VAT)",
-phFixedPrice: "e.g. 12.5",
+phFixedPrice: "12.5",
 btnCalc: "🔥 Calculate cost",
 btnSmart: "🌱 Find the cheapest hour",
 advSettings: "⚙️ Advanced settings",
@@ -567,7 +577,6 @@ cB4: "<ul><li><strong>Grid fees and margin.</strong> On top of the spot price co
 cH5: "How does the calculator work?",
 cB5: "<p>It uses the Nord Pool hourly prices for the Estonian price area as published by <strong>Elering</strong>, multiplying heater power, heating duration and the prices of the chosen hours.</p><p><strong>VAT:</strong> the calculator adds VAT to the spot price itself. Enter the grid fee, the margin and any fixed price <strong>with VAT already included</strong> — the calculator does not add tax to those.</p><p>The “Find the cheapest hour” button walks through every available hour and shows which start time gives the lowest total for the whole session.</p><p>The tool is free and needs no account.</p>",
 footerContact: "Contact: meelis@lessgo.ee",
-footerPrivacy: "Privacy and terms",
 loadingShort: "Loading data...",
 loadError: "Error loading data :(",
 noPrices: "Prices coming soon...",
@@ -622,7 +631,9 @@ document.getElementById('langEn').classList.toggle('active', lang === 'en');
 
 if (electricityPrices.length) populateTimeSelect();
 const avgEl = document.getElementById('avgPriceInfo');
-if (avgEl && avgEl.dataset.price) avgEl.innerText = t('avgPrice')(avgEl.dataset.price);
+if (avgEl && avgEl.dataset.price) avgEl.innerText = t('avgPrice')(fmtNum(parseFloat(avgEl.dataset.price), 1));
+const totalEl = document.getElementById('totalCost');
+if (totalEl && totalEl.dataset.total) totalEl.innerText = fmtNum(parseFloat(totalEl.dataset.total), 2) + " €";
 
 if (!skipUrl) {
 const url = new URL(location.href);
@@ -686,7 +697,7 @@ const hourStr = time.getHours() + ":00";
 const option = document.createElement('option');
 option.value = pricePoint.timestamp;
 
-option.text = `${dayStr} ${hourStr} (${pricePerKwh.toFixed(1)} ${t('unitShort')})`;
+option.text = `${dayStr} ${hourStr} (${fmtNum(pricePerKwh, 1)} ${t('unitShort')})`;
 
 if (pricePerKwh < 10) option.style.color = "#4ade80"; 
 else if (pricePerKwh > 30) option.style.color = "#f87171"; 
@@ -723,14 +734,14 @@ if(coffeeSection) coffeeSection.classList.add('hidden');
 
 function calculateCost(isSmart = false) {
 const duration = parseFloat(document.getElementById('duration').value);
-const fixedFees = parseFloat(document.getElementById('fixedFees').value);
-const power = parseFloat(document.getElementById('heaterPower').value);
+const fixedFees = readNum('fixedFees');
+const power = readNum('heaterPower');
 
 let totalCost = 0;
 let avgPriceDisp = 0;
 
 if (currentMode === 'fixed') {
-const userPrice = parseFloat(document.getElementById('userFixedPrice').value);
+const userPrice = readNum('userFixedPrice');
 if (isNaN(userPrice)) { alert(t('alertNoPrice')); return; }
 const fullPrice = userPrice + fixedFees;
 totalCost = (fullPrice / 100) * power * duration;
@@ -761,10 +772,12 @@ document.getElementById('smartBadge').style.display = isSmart ? 'inline-block' :
 
 const resultArea = document.getElementById('resultArea');
 resultArea.style.display = 'block';
-document.getElementById('totalCost').innerText = totalCost.toFixed(2) + " €";
+const totalEl = document.getElementById('totalCost');
+totalEl.dataset.total = totalCost;
+totalEl.innerText = fmtNum(totalCost, 2) + " €";
 const avgEl = document.getElementById('avgPriceInfo');
-avgEl.dataset.price = avgPriceDisp.toFixed(1);
-avgEl.innerText = t('avgPrice')(avgEl.dataset.price);
+avgEl.dataset.price = avgPriceDisp;
+avgEl.innerText = t('avgPrice')(fmtNum(avgPriceDisp, 1));
 
 const coffeeSection = document.getElementById('coffeeSection');
 if(coffeeSection) coffeeSection.classList.remove('hidden');
@@ -773,7 +786,7 @@ if(coffeeSection) coffeeSection.classList.remove('hidden');
 function findCheapestAndSet() {
 if (currentMode !== 'exchange') return;
 const duration = parseFloat(document.getElementById('duration').value);
-const fixedFees = parseFloat(document.getElementById('fixedFees').value);
+const fixedFees = readNum('fixedFees');
 
 let bestCost = Infinity;
 let bestTimestamp = null;
