@@ -296,6 +296,7 @@ padding-top: 20px;
         .seo-details summary { padding: 10px; cursor: pointer; font-weight: 500; }
         .seo-content { padding: 0 15px 15px 15px; line-height: 1.6; }
 
+.field-hint { color: var(--secondary-text); font-size: 0.8rem; margin: -6px 0 10px 0; line-height: 1.4; }
 .brand-tag { text-align: center; color: var(--secondary-text); font-size: 0.8rem; margin: -10px 0 20px 0; }
 .page-content { margin-top: 32px; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.08); text-align: left; color: var(--secondary-text); font-size: 0.92rem; line-height: 1.65; }
 .page-content h2 { color: var(--text-color); font-size: 1.05rem; margin: 26px 0 8px 0; }
@@ -375,7 +376,8 @@ padding-top: 20px;
 </div>
 
 <div class="input-group">
-<label data-i18n="labelDuration">Kui kaua saunas möllad?</label>
+<label data-i18n="labelDuration">Kui kaua kerist kütad?</label>
+<p class="field-hint" data-i18n="hintDuration">Arvesta sisse ka sauna eelsoojendamise aeg.</p>
 <div class="select-wrapper">
 <select id="duration">
 <option value="1" data-i18n="dur1">1 tund</option>
@@ -474,7 +476,8 @@ docTitle: "Sauna kütmise kulu kalkulaator – elektrihind ja soodsaim aeg",
 docDesc: "Arvuta, kui palju maksab sauna kütmine. Tasuta kalkulaator kasutab Eleringi börsihindu ja näitab, mis kell on elekter kõige odavam.",
 tabExchange: "Börsipakett",
 tabFixed: "Fikseeritud",
-labelDuration: "Kui kaua saunas möllad?",
+labelDuration: "Kui kaua kerist kütad?",
+hintDuration: "Arvesta sisse ka sauna eelsoojendamise aeg.",
 dur1: "1 tund", dur15: "1.5 tundi", dur2: "2 tundi", dur25: "2.5 tundi",
 dur3: "3 tundi", dur35: "3.5 tundi", dur4: "4 tundi", dur5: "5 tundi",
 labelStart: "Millal alustad kütmist?",
@@ -528,7 +531,8 @@ docTitle: "Sauna Heating Cost Calculator – Electricity Price & Best Time",
 docDesc: "Work out what heating your sauna costs. Free calculator using Nord Pool spot prices, showing the cheapest hour to fire up the stove.",
 tabExchange: "Spot price",
 tabFixed: "Fixed price",
-labelDuration: "How long is your sauna session?",
+labelDuration: "How long will you heat the stove?",
+hintDuration: "Include the time it takes to pre-heat the sauna.",
 dur1: "1 hour", dur15: "1.5 hours", dur2: "2 hours", dur25: "2.5 hours",
 dur3: "3 hours", dur35: "3.5 hours", dur4: "4 hours", dur5: "5 hours",
 labelStart: "When do you start heating?",
