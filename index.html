@@ -346,7 +346,7 @@ padding-top: 20px;
       "name": "Kas kalkulaator arvestab käibemaksu ja võrgutasu?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Jah. Käibemaks on arvestusse sisse võetud ning võrgutasu ja müüja marginaali saad ise täpsemates seadetes muuta."
+        "text": "Osaliselt. Käibemaksu lisab kalkulaator ise ainult elektri börsihinnale. Võrgutasu, müüja marginaal ja fikseeritud hind tuleb sisestada koos käibemaksuga — neile kalkulaator maksu juurde ei arvuta."
       }
     }
   ]
@@ -400,7 +400,7 @@ padding-top: 20px;
 </div>
 
 <div id="fixedGroup" class="input-group hidden">
-<label data-i18n="labelFixedPrice">Sinu elektri hind (senti/kWh)</label>
+<label data-i18n="labelFixedPrice">Sinu elektri hind (senti/kWh, km-ga)</label>
 <input type="number" id="userFixedPrice" placeholder="Nt. 12.5" data-i18n-placeholder="phFixedPrice" step="0.1">
 </div>
 
@@ -413,7 +413,7 @@ padding-top: 20px;
 <summary data-i18n="advSettings">⚙️ Täpsemad seaded</summary>
 <div style="margin-top: 15px;">
 <div class="input-group">
-<label data-i18n="labelFees">Võrgutasu + marginaal (senti/kWh)</label>
+<label data-i18n="labelFees">Võrgutasu + marginaal (senti/kWh, km-ga)</label>
 <input type="number" id="fixedFees" value="7.0" step="0.1">
 </div>
 <div class="input-group">
@@ -479,12 +479,12 @@ dur1: "1 tund", dur15: "1.5 tundi", dur2: "2 tundi", dur25: "2.5 tundi",
 dur3: "3 tundi", dur35: "3.5 tundi", dur4: "4 tundi", dur5: "5 tundi",
 labelStart: "Millal alustad kütmist?",
 loadingHours: "Laen kellaaegu...",
-labelFixedPrice: "Sinu elektri hind (senti/kWh)",
+labelFixedPrice: "Sinu elektri hind (senti/kWh, km-ga)",
 phFixedPrice: "Nt. 12.5",
 btnCalc: "🔥 Arvuta kulu",
 btnSmart: "🌱 Leia soodsaim aeg",
 advSettings: "⚙️ Täpsemad seaded",
-labelFees: "Võrgutasu + marginaal (senti/kWh)",
+labelFees: "Võrgutasu + marginaal (senti/kWh, km-ga)",
 labelPower: "Kerise võimsus (kW)",
 loadingData: "Laen Eleringi andmeid...",
 badgeCheapest: "SOODSAIM VALIK!",
@@ -498,16 +498,16 @@ cH1: "Kui palju maksab sauna kütmine?",
 cB1: "<p>Sauna kütmise kulu sõltub kolmest asjast: <strong>kerise võimsusest</strong>, <strong>kütmise ajast</strong> ja <strong>elektri hinnast sel tunnil</strong>. Valem ise on lihtne:</p><p class='formula'>kerise võimsus (kW) × kütmise aeg (h) × elektri hind (senti/kWh) = kulu</p><p>Näide: 6 kW keris, 2 tundi kütmist ja elektri hind 15 senti/kWh koos võrgutasu ning käibemaksuga annab 6 × 2 × 15 = 180 senti ehk <strong>1,80 €</strong>.</p><p>Kõige rohkem kõigub neist kolmest viimane. Börsipaketiga võib täpselt sama saun maksta öösel alla euro ja õhtusel tipptunnil mitu korda rohkem.</p>",
 
 cH2: "Kui suur keris millisesse sauna?",
-cB2: "<p>Kerise võimsus valitakse leiliruumi kuupmahu järgi. Ligikaudne juhis:</p><table><tr><th>Leiliruum</th><th>Keris</th><th>2 h, 15 s/kWh</th></tr><tr><td>kuni 6 m³</td><td>4,5 kW</td><td>~1,35 €</td></tr><tr><td>6–9 m³</td><td>6 kW</td><td>~1,80 €</td></tr><tr><td>9–13 m³</td><td>8 kW</td><td>~2,40 €</td></tr><tr><td>13–18 m³</td><td>9 kW</td><td>~2,70 €</td></tr></table><p class='note'>Tabeli hinnad on ülempiir. Keris ei tõmba kogu aeg täisvõimsust — kui leiliruum on soe, lülitab termostaat kütte vahepeal välja, nii et tegelik kulu jääb tavaliselt väiksemaks.</p>",
+cB2: "<p>Kerise võimsus valitakse leiliruumi kuupmahu järgi. Ligikaudne juhis:</p><table><tr><th>Leiliruum</th><th>Keris</th><th>2 h, 15 s/kWh</th></tr><tr><td>kuni 6 m³</td><td>4,5 kW</td><td>~1,35 €</td></tr><tr><td>6–9 m³</td><td>6 kW</td><td>~1,80 €</td></tr><tr><td>9–13 m³</td><td>8 kW</td><td>~2,40 €</td></tr><tr><td>13–18 m³</td><td>9 kW</td><td>~2,70 €</td></tr></table><p class='note'>Tabeli hinnad on ülempiir just nendel näidistingimustel, mitte üldine hinnalagi. Keris ei tõmba kogu aeg täisvõimsust — kui leiliruum on soe, lülitab termostaat kütte vahepeal välja, nii et tegelik kulu jääb tavaliselt väiksemaks.</p>",
 
 cH3: "Millal on elekter kõige odavam?",
 cB3: "<p>Börsihind kõigub ööpäeva jooksul kordades. Üldine muster Eestis:</p><ul><li><strong>Odavaim</strong> on tavaliselt öö kella 00 ja 06 vahel, sageli ka keskpäev, kui päikeseenergiat on palju.</li><li><strong>Kalleim</strong> on hommikune tipp kella 8–10 ja õhtune tipp kella 17–21.</li></ul><p>See muster kehtib enamikul päevadel, aga mitte kõigil — tuulevaikne talveõhtu ja tuuline suveöö näevad täiesti erinevad välja. Just seepärast võtab kalkulaator Eleringilt iga päeva tegelikud tunnihinnad, mitte keskmise.</p>",
 
 cH4: "Mis veel kulu mõjutab?",
-cB4: "<ul><li><strong>Võrgutasu ja marginaal.</strong> Börsihinnale lisandub võrguettevõtja tasu ja müüja marginaal. Neid saad täpsemates seadetes ise muuta.</li><li><strong>Soojustus.</strong> Halvasti soojustatud leiliruum vajab sama temperatuuri saavutamiseks pikemat kütmist.</li><li><strong>Kivide mass.</strong> Rohkem kive tähendab pikemat soojenemist, aga ka kauem püsivat leili.</li><li><strong>Algtemperatuur.</strong> Külmast saunast alustamine maksab rohkem kui juba soojas majas.</li></ul>",
+cB4: "<ul><li><strong>Võrgutasu ja marginaal.</strong> Börsihinnale lisandub võrguettevõtja tasu ja müüja marginaal. Neid saad täpsemates seadetes ise muuta.</li><li><strong>Soojustus.</strong> Halvasti soojustatud leiliruum vajab sama temperatuuri saavutamiseks pikemat kütmist.</li><li><strong>Kivide mass.</strong> Rohkem kive tähendab pikemat soojenemist, aga ka kauem püsivat leili.</li><li><strong>Algtemperatuur.</strong> Külma leiliruumi soojendamine kulutab rohkem kui juba sooja leiliruumi kütmine.</li></ul>",
 
 cH5: "Kuidas kalkulaator arvutab?",
-cB5: "<p>Kalkulaator kasutab <strong>Eleringi</strong> avaldatud Nord Pooli tunnihindu Eesti hinnapiirkonnas ning korrutab kerise võimsuse, kütmise kestuse ja valitud tundide hinnad. Käibemaks on arvestusse sisse võetud.</p><p>Nupp „Leia soodsaim aeg\" käib läbi kõik saadaolevad tunnid ja näitab, milline stardiaeg annab kogu sessiooni kohta madalaima koguhinna.</p><p>Tööriist on tasuta ja kontot ei nõua.</p>",
+cB5: "<p>Kalkulaator kasutab <strong>Eleringi</strong> avaldatud Nord Pooli tunnihindu Eesti hinnapiirkonnas ning korrutab kerise võimsuse, kütmise kestuse ja valitud tundide hinnad.</p><p><strong>Käibemaks:</strong> börsihinnale lisab kalkulaator käibemaksu ise. Võrgutasu, marginaali ja fikseeritud hinna sisesta <strong>koos käibemaksuga</strong> — neile kalkulaator maksu juurde ei arvuta.</p><p>Nupp „Leia soodsaim aeg” käib läbi kõik saadaolevad tunnid ja näitab, milline stardiaeg annab kogu sessiooni kohta madalaima koguhinna.</p><p>Tööriist on tasuta ja kontot ei nõua.</p>",
 footerContact: "Kontakt: meelis@lessgo.ee",
 footerPrivacy: "Privaatsus ja tingimused",
 loadingShort: "Laen andmeid...",
@@ -533,12 +533,12 @@ dur1: "1 hour", dur15: "1.5 hours", dur2: "2 hours", dur25: "2.5 hours",
 dur3: "3 hours", dur35: "3.5 hours", dur4: "4 hours", dur5: "5 hours",
 labelStart: "When do you start heating?",
 loadingHours: "Loading hours...",
-labelFixedPrice: "Your electricity price (cents/kWh)",
+labelFixedPrice: "Your electricity price (cents/kWh, incl. VAT)",
 phFixedPrice: "e.g. 12.5",
 btnCalc: "🔥 Calculate cost",
 btnSmart: "🌱 Find the cheapest hour",
 advSettings: "⚙️ Advanced settings",
-labelFees: "Grid fee + margin (cents/kWh)",
+labelFees: "Grid fee + margin (cents/kWh, incl. VAT)",
 labelPower: "Heater power (kW)",
 loadingData: "Loading Elering data...",
 badgeCheapest: "CHEAPEST OPTION!",
@@ -552,16 +552,16 @@ cH1: "How much does heating a sauna cost?",
 cB1: "<p>The cost comes down to three things: <strong>heater power</strong>, <strong>heating time</strong> and <strong>the electricity price in that hour</strong>. The formula is simple:</p><p class='formula'>heater power (kW) × heating time (h) × price (cents/kWh) = cost</p><p>Example: a 6 kW heater, 2 hours of heating and a price of 15 cents/kWh including grid fees and VAT gives 6 × 2 × 15 = 180 cents, or <strong>€1.80</strong>.</p><p>The last number is the one that swings. On a spot-price contract the very same sauna can cost under a euro at night and several times that during the evening peak.</p>",
 
 cH2: "What size heater for which sauna?",
-cB2: "<p>Heater power is chosen by the volume of the steam room. A rough guide:</p><table><tr><th>Steam room</th><th>Heater</th><th>2 h at 15 c/kWh</th></tr><tr><td>up to 6 m³</td><td>4.5 kW</td><td>~€1.35</td></tr><tr><td>6–9 m³</td><td>6 kW</td><td>~€1.80</td></tr><tr><td>9–13 m³</td><td>8 kW</td><td>~€2.40</td></tr><tr><td>13–18 m³</td><td>9 kW</td><td>~€2.70</td></tr></table><p class='note'>These are upper bounds. A heater does not draw full power the whole time — once the room is hot the thermostat cuts in, so the real cost is usually lower.</p>",
+cB2: "<p>Heater power is chosen by the volume of the sauna room. A rough guide:</p><table><tr><th>Sauna room</th><th>Heater</th><th>2 h at 15 c/kWh</th></tr><tr><td>up to 6 m³</td><td>4.5 kW</td><td>~€1.35</td></tr><tr><td>6–9 m³</td><td>6 kW</td><td>~€1.80</td></tr><tr><td>9–13 m³</td><td>8 kW</td><td>~€2.40</td></tr><tr><td>13–18 m³</td><td>9 kW</td><td>~€2.70</td></tr></table><p class='note'>These are upper bounds for the example conditions above, not a general ceiling. A heater does not draw full power the whole time — once the room is hot the thermostat cuts in, so the real cost is usually lower.</p>",
 
 cH3: "When is electricity cheapest?",
 cB3: "<p>Spot prices swing several times over within a day. The general pattern in Estonia:</p><ul><li><strong>Cheapest</strong> is usually between midnight and 6am, and often midday when there is plenty of solar.</li><li><strong>Most expensive</strong> is the morning peak around 8–10am and the evening peak around 5–9pm.</li></ul><p>That holds on most days, but not all — a windless winter evening and a windy summer night look nothing alike. That is why the calculator pulls the actual hourly prices from Elering every day rather than using an average.</p>",
 
 cH4: "What else affects the cost?",
-cB4: "<ul><li><strong>Grid fees and margin.</strong> On top of the spot price come your grid operator fee and the seller margin. You can adjust both under advanced settings.</li><li><strong>Insulation.</strong> A poorly insulated steam room needs longer heating to reach the same temperature.</li><li><strong>Mass of stones.</strong> More stones means a longer warm-up, but steam that lasts longer.</li><li><strong>Starting temperature.</strong> Starting from a cold sauna costs more than from a warm house.</li></ul>",
+cB4: "<ul><li><strong>Grid fees and margin.</strong> On top of the spot price come your grid operator fee and the seller margin. You can adjust both under advanced settings.</li><li><strong>Insulation.</strong> A poorly insulated sauna room needs longer heating to reach the same temperature.</li><li><strong>Mass of stones.</strong> More stones means a longer warm-up, but steam that lasts longer.</li><li><strong>Starting temperature.</strong> Heating a cold sauna room costs more than topping up one that is already warm.</li></ul>",
 
 cH5: "How does the calculator work?",
-cB5: "<p>It uses the Nord Pool hourly prices for the Estonian price area as published by <strong>Elering</strong>, multiplying heater power, heating duration and the prices of the chosen hours. VAT is included.</p><p>The „Find the cheapest hour\" button walks through every available hour and shows which start time gives the lowest total for the whole session.</p><p>The tool is free and needs no account.</p>",
+cB5: "<p>It uses the Nord Pool hourly prices for the Estonian price area as published by <strong>Elering</strong>, multiplying heater power, heating duration and the prices of the chosen hours.</p><p><strong>VAT:</strong> the calculator adds VAT to the spot price itself. Enter the grid fee, the margin and any fixed price <strong>with VAT already included</strong> — the calculator does not add tax to those.</p><p>The “Find the cheapest hour” button walks through every available hour and shows which start time gives the lowest total for the whole session.</p><p>The tool is free and needs no account.</p>",
 footerContact: "Contact: meelis@lessgo.ee",
 footerPrivacy: "Privacy and terms",
 loadingShort: "Loading data...",
